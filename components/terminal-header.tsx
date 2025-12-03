@@ -11,6 +11,8 @@ export function TerminalHeader() {
   const [priceChange, setPriceChange] = useState(2.34)
   const [pnl, setPnl] = useState(345.25)
   const [connected, setConnected] = useState(false)
+  const [isJackingIn, setIsJackingIn] = useState(false)
+  const [jackInPhase, setJackInPhase] = useState(0)
   const [walletBalance, setWalletBalance] = useState({
     btc: 1.2453,
     usd: 53892.45,
@@ -48,8 +50,130 @@ export function TerminalHeader() {
     })
   }
 
+  const handleJackIn = () => {
+    if (connected) {
+      setConnected(false)
+      return
+    }
+
+    setIsJackingIn(true)
+    setJackInPhase(1)
+
+    // Phase 1: Initial pulse
+    setTimeout(() => setJackInPhase(2), 300)
+    // Phase 2: Neural sync
+    setTimeout(() => setJackInPhase(3), 700)
+    // Phase 3: Data stream
+    setTimeout(() => setJackInPhase(4), 1100)
+    // Phase 4: Connected
+    setTimeout(() => {
+      setJackInPhase(0)
+      setIsJackingIn(false)
+      setConnected(true)
+    }, 1500)
+  }
+
   return (
     <div className="flex items-center justify-between px-3 py-2 neon-border glass-panel relative overflow-hidden">
+      {isJackingIn && (
+        <div className="absolute inset-0 z-20 pointer-events-none overflow-hidden">
+          {/* Expanding rings */}
+          <div className="absolute right-[100px] top-1/2 -translate-y-1/2">
+            <div
+              className="absolute w-4 h-4 -translate-x-1/2 -translate-y-1/2 rounded-full border border-cyan-400"
+              style={{
+                animation: "ping 1s cubic-bezier(0, 0, 0.2, 1) infinite",
+                boxShadow: "0 0 20px #00ffff",
+              }}
+            />
+            <div
+              className="absolute w-4 h-4 -translate-x-1/2 -translate-y-1/2 rounded-full border border-cyan-400"
+              style={{
+                animation: "ping 1s cubic-bezier(0, 0, 0.2, 1) infinite 0.2s",
+                boxShadow: "0 0 20px #00ffff",
+              }}
+            />
+            <div
+              className="absolute w-4 h-4 -translate-x-1/2 -translate-y-1/2 rounded-full border border-cyan-400"
+              style={{
+                animation: "ping 1s cubic-bezier(0, 0, 0.2, 1) infinite 0.4s",
+                boxShadow: "0 0 20px #00ffff",
+              }}
+            />
+          </div>
+
+          {/* Scanning line */}
+          <div
+            className="absolute h-full w-1 bg-gradient-to-b from-transparent via-cyan-400 to-transparent opacity-60"
+            style={{
+              animation: "scan-line 0.8s ease-in-out infinite",
+              boxShadow: "0 0 15px #00ffff",
+            }}
+          />
+
+          {/* Neural connection lines */}
+          {jackInPhase >= 2 && (
+            <svg className="absolute inset-0 w-full h-full">
+              <line
+                x1="0%"
+                y1="50%"
+                x2="100%"
+                y2="50%"
+                stroke="#00ffff"
+                strokeWidth="1"
+                strokeDasharray="5,5"
+                style={{
+                  animation: "dash 0.5s linear infinite",
+                  filter: "drop-shadow(0 0 5px #00ffff)",
+                }}
+              />
+              <line
+                x1="50%"
+                y1="0%"
+                x2="50%"
+                y2="100%"
+                stroke="#00ffff"
+                strokeWidth="1"
+                strokeDasharray="5,5"
+                style={{
+                  animation: "dash 0.5s linear infinite 0.1s",
+                  filter: "drop-shadow(0 0 5px #00ffff)",
+                }}
+              />
+            </svg>
+          )}
+
+          {/* Data particles */}
+          {jackInPhase >= 3 && (
+            <div className="absolute inset-0">
+              {[...Array(12)].map((_, i) => (
+                <div
+                  key={i}
+                  className="absolute w-1 h-1 bg-cyan-400 rounded-full"
+                  style={{
+                    left: `${Math.random() * 100}%`,
+                    top: `${Math.random() * 100}%`,
+                    animation: `float-particle 0.5s ease-out forwards`,
+                    animationDelay: `${i * 0.05}s`,
+                    boxShadow: "0 0 6px #00ffff",
+                  }}
+                />
+              ))}
+            </div>
+          )}
+
+          {/* Flash on connect */}
+          {jackInPhase === 4 && (
+            <div
+              className="absolute inset-0 bg-cyan-400"
+              style={{
+                animation: "flash-connect 0.4s ease-out forwards",
+              }}
+            />
+          )}
+        </div>
+      )}
+
       <div className="absolute inset-0 opacity-[0.03] pointer-events-none data-stream-bg" />
 
       <div className="flex items-center gap-4 relative z-10">
@@ -112,16 +236,57 @@ export function TerminalHeader() {
         )}
 
         <button
-          onClick={() => setConnected(!connected)}
-          className={`px-3 py-2 text-[10px] transition-all duration-300 ${
-            connected
-              ? "glow-green border border-[#00ff88] hover:bg-[#00ff8820] neon-border"
-              : "glow-cyan border border-[#00ffff] hover:bg-[#00ffff20] neon-border hologram"
+          onClick={handleJackIn}
+          disabled={isJackingIn}
+          className={`px-3 py-2 text-[10px] transition-all duration-300 relative overflow-hidden ${
+            isJackingIn
+              ? "border border-cyan-400 bg-cyan-400/20"
+              : connected
+                ? "glow-green border border-[#00ff88] hover:bg-[#00ff8820] neon-border"
+                : "glow-cyan border border-[#00ffff] hover:bg-[#00ffff20] neon-border hologram"
           }`}
         >
-          {connected ? <span>◉ 0x7f...3a2b</span> : <span>[ JACK IN ]</span>}
+          {isJackingIn ? (
+            <span className="flex items-center gap-2">
+              <span className="w-2 h-2 bg-cyan-400 rounded-full animate-pulse" />
+              <span style={{ animation: "glitch-text 0.1s infinite" }}>
+                {jackInPhase === 1 && "INITIATING..."}
+                {jackInPhase === 2 && "SYNCING..."}
+                {jackInPhase === 3 && "LINKING..."}
+                {jackInPhase === 4 && "CONNECTED"}
+              </span>
+            </span>
+          ) : connected ? (
+            <span>◉ 0x7f...3a2b</span>
+          ) : (
+            <span>[ JACK IN ]</span>
+          )}
         </button>
       </div>
+
+      <style jsx>{`
+        @keyframes scan-line {
+          0% { left: 0%; opacity: 0; }
+          10% { opacity: 0.6; }
+          90% { opacity: 0.6; }
+          100% { left: 100%; opacity: 0; }
+        }
+        @keyframes dash {
+          to { stroke-dashoffset: -10; }
+        }
+        @keyframes float-particle {
+          0% { transform: scale(0); opacity: 1; }
+          100% { transform: scale(2) translateY(-10px); opacity: 0; }
+        }
+        @keyframes flash-connect {
+          0% { opacity: 0.8; }
+          100% { opacity: 0; }
+        }
+        @keyframes glitch-text {
+          0%, 100% { opacity: 1; }
+          50% { opacity: 0.8; transform: translateX(1px); }
+        }
+      `}</style>
     </div>
   )
 }
