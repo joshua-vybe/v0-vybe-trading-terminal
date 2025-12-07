@@ -178,20 +178,20 @@ export function TerminalHeader() {
 
       <div className="flex items-center gap-4 relative z-10">
         <VybeLogoSVG size="sm" />
-        <span className="text-[9px] text-cyan-500/50 tracking-wider">
+        <span className="text-[10px] text-cyan-500/50 tracking-wider">
           <GlitchText text="NEURAL v3.0" glitchIntensity="low" />
         </span>
       </div>
 
       <div className="flex items-center gap-2 px-3 py-1 border border-[#00ffff40] relative z-10 neural-pulse">
-        <span className="text-[10px] text-[#00ffff60]">BTC-USD</span>
+        <span className="text-[11px] text-[#00ffff60]">BTC-USD</span>
         <span className="text-[14px] glow-cyan font-bold tabular-nums">${price.toFixed(2)}</span>
-        <span className={`text-[10px] ${priceChange >= 0 ? "glow-green" : "glow-crimson"}`}>
+        <span className={`text-[11px] ${priceChange >= 0 ? "glow-green" : "glow-crimson"}`}>
           {priceChange >= 0 ? "▲" : "▼"} {Math.abs(priceChange).toFixed(2)}%
         </span>
       </div>
 
-      <div className="flex items-center gap-6 text-[10px] relative z-10">
+      <div className="flex items-center gap-6 text-[11px] relative z-10">
         <StatusIndicator status="online" label="NEURAL LINK" />
         <div className="flex items-center gap-1">
           <span className="text-[#00ffff60]">LAT:</span>
@@ -216,17 +216,17 @@ export function TerminalHeader() {
       {/* Right: Time + Wallet */}
       <div className="flex items-center gap-4 relative z-10">
         <div className="text-right">
-          <div className="text-[9px] text-[#00ffff60]">SYNC TIME</div>
+          <div className="text-[10px] text-[#00ffff60]">SYNC TIME</div>
           <div className="text-sm glow-cyan font-bold tracking-wider tabular-nums">{formatTime(time)}</div>
         </div>
 
         {connected && (
           <div className="flex flex-col items-end px-2 py-1 border border-[#00ff8840] fade-in-up">
-            <div className="flex items-center gap-2 text-[10px]">
+            <div className="flex items-center gap-2 text-[11px]">
               <span className="text-[#00ff8880]">BTC</span>
               <span className="glow-green font-bold tabular-nums">{walletBalance.btc.toFixed(4)}</span>
             </div>
-            <div className="flex items-center gap-2 text-[10px]">
+            <div className="flex items-center gap-2 text-[11px]">
               <span className="text-[#00ff8880]">USD</span>
               <span className="glow-green tabular-nums">
                 ${walletBalance.usd.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
@@ -238,7 +238,7 @@ export function TerminalHeader() {
         <button
           onClick={handleJackIn}
           disabled={isJackingIn}
-          className={`px-3 py-2 text-[10px] transition-all duration-300 relative overflow-hidden ${
+          className={`px-3 py-2 text-[11px] transition-all duration-300 relative overflow-hidden ${
             isJackingIn
               ? "border border-cyan-400 bg-cyan-400/20"
               : connected

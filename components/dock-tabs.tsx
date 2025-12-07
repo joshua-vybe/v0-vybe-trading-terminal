@@ -53,7 +53,7 @@ export function DockTabs({ activeTab, onTabChange }: DockTabsProps) {
             onMouseEnter={() => setHoveredTab(tab.id)}
             onMouseLeave={() => setHoveredTab(null)}
             className={`
-              flex-1 py-2 text-[10px] font-bold border-r border-[#00ffff20] last:border-r-0
+              flex-1 py-2 text-[11px] font-bold border-r border-[#00ffff20] last:border-r-0
               transition-all duration-300 relative overflow-hidden
               ${
                 activeTab === tab.id
@@ -88,7 +88,7 @@ export function DockTabs({ activeTab, onTabChange }: DockTabsProps) {
             </pre>
 
             {hoveredTab === tab.id && activeTab !== tab.id && (
-              <div className="absolute bottom-0 left-0 right-0 text-[8px] text-fuchsia-400/60 tracking-wider">
+              <div className="absolute bottom-0 left-0 right-0 text-[9px] text-fuchsia-400/60 tracking-wider">
                 {tab.hint}
               </div>
             )}

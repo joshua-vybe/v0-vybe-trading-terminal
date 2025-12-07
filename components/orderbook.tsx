@@ -76,8 +76,8 @@ export function Orderbook({ venue }: OrderbookProps) {
   return (
     <div className="h-full neon-border glass-panel p-2 flex flex-col overflow-hidden">
       <div className="flex justify-between items-center mb-1">
-        <span className="text-[9px] text-[#00ffff60]">DEPTH</span>
-        <span className="text-[9px] text-[#00ffff]">{venue}</span>
+        <span className="text-[10px] text-[#00ffff60]">DEPTH</span>
+        <span className="text-[10px] text-[#00ffff]">{venue}</span>
       </div>
 
       {/* Depth Chart */}
@@ -96,14 +96,14 @@ export function Orderbook({ venue }: OrderbookProps) {
             </defs>
             <XAxis
               dataKey="price"
-              tick={{ fontSize: 7, fill: "#00ffff60" }}
+              tick={{ fontSize: 8, fill: "#00ffff60" }}
               axisLine={{ stroke: "#00ffff30" }}
               tickLine={{ stroke: "#00ffff30" }}
               tickFormatter={(v) => (v / 1000).toFixed(1) + "k"}
               interval="preserveStartEnd"
             />
             <YAxis
-              tick={{ fontSize: 7, fill: "#00ffff60" }}
+              tick={{ fontSize: 8, fill: "#00ffff60" }}
               axisLine={{ stroke: "#00ffff30" }}
               tickLine={{ stroke: "#00ffff30" }}
               width={30}
@@ -132,7 +132,7 @@ export function Orderbook({ venue }: OrderbookProps) {
       </div>
 
       {/* Stats Row */}
-      <div className="flex justify-between text-[8px] mt-1 pt-1 border-t border-[#00ffff20]">
+      <div className="flex justify-between text-[9px] mt-1 pt-1 border-t border-[#00ffff20]">
         <div>
           <span className="text-[#00ffff60]">SPD </span>
           <span className="text-[#ffff00]">${stats.spread.toFixed(2)}</span>

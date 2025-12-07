@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { AsciiChart } from "@/components/ascii-chart"
+import { TradingViewChart } from "@/components/tradingview-chart"
 import { RightPanel } from "@/components/right-panel"
 import { AITerminal } from "@/components/ai-terminal"
 import { DockTabs } from "@/components/dock-tabs"
@@ -14,7 +14,6 @@ import { NeuralNetworkBg } from "./neural-network-bg"
 import { CircuitLines } from "./circuit-lines"
 
 export function TradingTerminal() {
-  const [selectedVenue, setSelectedVenue] = useState<string>("HYPERLIQUID")
   const [activeTab, setActiveTab] = useState<string>("TERMINAL")
   const [isLoaded, setIsLoaded] = useState(false)
 
@@ -29,10 +28,10 @@ export function TradingTerminal() {
         return (
           <div className="flex-1 flex gap-2 min-h-0 slide-in-right" style={{ animationDelay: "0.2s" }}>
             <div className="w-[70%] flex flex-col">
-              <AsciiChart />
+              <TradingViewChart />
             </div>
             <div className="w-[30%]">
-              <RightPanel selectedVenue={selectedVenue} onVenueChange={setSelectedVenue} />
+              <RightPanel />
             </div>
           </div>
         )
