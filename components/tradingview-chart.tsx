@@ -31,6 +31,9 @@ interface Position {
   entry: number
   size: number
   liquidation: number
+  strategy: string
+  pnl: number
+  pnlPercent: number
 }
 
 interface Order {
@@ -39,6 +42,7 @@ interface Order {
   orderType: "limit" | "market"
   price: number
   size: number
+  strategy?: string
 }
 
 interface CandleData {
@@ -130,16 +134,44 @@ export function TradingViewChart() {
 
   const positions: Position[] = useMemo(
     () => [
-      { id: "p1", type: "long", entry: 43150, size: 0.5, liquidation: 42100 },
-      { id: "p2", type: "short", entry: 43380, size: 0.25, liquidation: 44500 },
+      {
+        id: "p1",
+        type: "long",
+        entry: 43150,
+        size: 0.5,
+        liquidation: 42100,
+        strategy: "MOMENTUM_SCALPER",
+        pnl: 234.5,
+        pnlPercent: 2.34,
+      },
+      {
+        id: "p2",
+        type: "short",
+        entry: 43380,
+        size: 0.25,
+        liquidation: 44500,
+        strategy: "MEAN_REVERSION",
+        pnl: -87.25,
+        pnlPercent: -1.12,
+      },
+      {
+        id: "p3",
+        type: "long",
+        entry: 43050,
+        size: 0.15,
+        liquidation: 41800,
+        strategy: "BREAKOUT_V2",
+        pnl: 156.8,
+        pnlPercent: 3.45,
+      },
     ],
     [],
   )
 
   const orders: Order[] = useMemo(
     () => [
-      { id: "o1", side: "buy", orderType: "limit", price: 43050, size: 0.3 },
-      { id: "o2", side: "sell", orderType: "limit", price: 43450, size: 0.2 },
+      { id: "o1", side: "buy", orderType: "limit", price: 43050, size: 0.3, strategy: "MOMENTUM_SCALPER" },
+      { id: "o2", side: "sell", orderType: "limit", price: 43450, size: 0.2, strategy: "MEAN_REVERSION" },
     ],
     [],
   )
@@ -203,22 +235,22 @@ export function TradingViewChart() {
     // Try v4+ API first, fall back to v3 API
     if (typeof (chart as any).addCandlestickSeries === "function") {
       candleSeries = (chart as any).addCandlestickSeries({
-        upColor: "#22c55e",
-        downColor: "#ef4444",
-        borderUpColor: "#22c55e",
-        borderDownColor: "#ef4444",
-        wickUpColor: "#22c55e",
-        wickDownColor: "#ef4444",
+        upColor: "#00ffff",
+        downColor: "#ff00ff",
+        borderUpColor: "#00ffff",
+        borderDownColor: "#ff00ff",
+        wickUpColor: "#00ffff",
+        wickDownColor: "#ff00ff",
       })
     } else if (typeof chart.addSeries === "function") {
       // v5 API
       candleSeries = chart.addSeries(LightweightCharts.CandlestickSeries, {
-        upColor: "#22c55e",
-        downColor: "#ef4444",
-        borderUpColor: "#22c55e",
-        borderDownColor: "#ef4444",
-        wickUpColor: "#22c55e",
-        wickDownColor: "#ef4444",
+        upColor: "#00ffff",
+        downColor: "#ff00ff",
+        borderUpColor: "#00ffff",
+        borderDownColor: "#ff00ff",
+        wickUpColor: "#00ffff",
+        wickDownColor: "#ff00ff",
       })
     }
 
@@ -227,15 +259,17 @@ export function TradingViewChart() {
       return
     }
 
-    // Add position lines
     positions.forEach((pos) => {
+      const pnlSign = pos.pnl >= 0 ? "+" : ""
+      const pnlColor = pos.pnl >= 0 ? "#22c55e" : "#ef4444"
+
       candleSeries.createPriceLine({
         price: pos.entry,
         color: pos.type === "long" ? "#00ffff" : "#ff00ff",
-        lineWidth: 1,
+        lineWidth: 2,
         lineStyle: LightweightCharts.LineStyle.Dashed,
         axisLabelVisible: true,
-        title: `${pos.type.toUpperCase()} ${pos.size}`,
+        title: `${pos.type.toUpperCase()} ${pos.size} | ${pos.strategy} | ${pnlSign}$${Math.abs(pos.pnl).toFixed(0)} (${pnlSign}${pos.pnlPercent.toFixed(1)}%)`,
       })
 
       candleSeries.createPriceLine({
@@ -248,7 +282,6 @@ export function TradingViewChart() {
       })
     })
 
-    // Add order lines
     orders.forEach((order) => {
       candleSeries.createPriceLine({
         price: order.price,
@@ -256,7 +289,7 @@ export function TradingViewChart() {
         lineWidth: 1,
         lineStyle: LightweightCharts.LineStyle.Solid,
         axisLabelVisible: true,
-        title: `${order.side.toUpperCase()} ${order.size}`,
+        title: `${order.side.toUpperCase()} ${order.size}${order.strategy ? ` | ${order.strategy}` : ""}`,
       })
     })
 

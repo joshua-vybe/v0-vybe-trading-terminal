@@ -305,7 +305,7 @@
 }
 
 .neon-border:hover {
-  box-shadow: 0 0 10px var(--theme-primary), 0 0 20px var(--theme-primary), inset 0 0 10px
+  box-shadow: 0 0 15px var(--theme-primary), 0 0 30px var(--theme-primary), inset 0 0 15px
     color-mix(in srgb, var(--theme-primary) 20%, transparent);
 }
 
@@ -377,25 +377,15 @@
 }
 
 /* CRT Effects */
-@keyframes flicker {
+@keyframes glow-pulse {
   0%,
   100% {
-    opacity: 1;
+    text-shadow: 0 0 5px currentColor, 0 0 10px currentColor, 0 0 15px currentColor;
+    filter: brightness(1);
   }
-  92% {
-    opacity: 1;
-  }
-  93% {
-    opacity: 0.8;
-  }
-  94% {
-    opacity: 1;
-  }
-  97% {
-    opacity: 0.9;
-  }
-  98% {
-    opacity: 1;
+  50% {
+    text-shadow: 0 0 8px currentColor, 0 0 16px currentColor, 0 0 24px currentColor;
+    filter: brightness(1.1);
   }
 }
 
@@ -410,19 +400,69 @@
   }
 }
 
-@keyframes glow-pulse {
+/* Added netrunner animations */
+@keyframes neon-breathe {
   0%,
   100% {
-    text-shadow: 0 0 5px currentColor, 0 0 10px currentColor, 0 0 15px currentColor;
-    filter: brightness(1);
+    box-shadow: 0 0 5px var(--theme-primary), 0 0 10px var(--theme-primary), inset 0 0 5px rgba(0, 255, 255, 0.05);
   }
   50% {
-    text-shadow: 0 0 10px currentColor, 0 0 20px currentColor, 0 0 30px currentColor;
-    filter: brightness(1.2);
+    box-shadow: 0 0 10px var(--theme-primary), 0 0 20px var(--theme-primary), 0 0 30px var(--theme-primary), inset 0 0
+      10px rgba(0, 255, 255, 0.1);
   }
 }
 
-/* Added netrunner animations */
+@keyframes hologram-flicker {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  92% {
+    opacity: 1;
+  }
+  93% {
+    opacity: 0.9;
+  }
+  94% {
+    opacity: 1;
+  }
+  97% {
+    opacity: 0.95;
+  }
+  98% {
+    opacity: 1;
+  }
+}
+
+@keyframes data-flow {
+  0% {
+    background-position: 0% 0%;
+  }
+  100% {
+    background-position: 0% 100%;
+  }
+}
+
+@keyframes border-glow-pulse {
+  0%,
+  100% {
+    border-color: rgba(0, 255, 255, 0.4);
+  }
+  50% {
+    border-color: rgba(0, 255, 255, 0.8);
+  }
+}
+
+@keyframes subtle-drift {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-2px);
+  }
+}
+
 @keyframes data-rain {
   0% {
     transform: translateY(-100%);
@@ -708,7 +748,6 @@
 }
 
 .crt-screen {
-  animation: flicker 5s infinite;
   position: relative;
 }
 
@@ -723,8 +762,8 @@
     0deg,
     transparent,
     transparent 2px,
-    rgba(0, 0, 0, 0.1) 2px,
-    rgba(0, 0, 0, 0.1) 4px
+    rgba(0, 0, 0, 0.03) 2px,
+    rgba(0, 0, 0, 0.03) 4px
   );
   pointer-events: none;
   z-index: 100;
@@ -737,13 +776,13 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: radial-gradient(ellipse at center, transparent 0%, rgba(0, 0, 0, 0.1) 80%, rgba(0, 0, 0, 0.3) 100%);
+  background: radial-gradient(ellipse at center, transparent 0%, rgba(0, 0, 0, 0.05) 80%, rgba(0, 0, 0, 0.15) 100%);
   pointer-events: none;
   z-index: 101;
 }
 
 .glow-pulse {
-  animation: glow-pulse 2s ease-in-out infinite;
+  animation: glow-pulse 3s ease-in-out infinite;
 }
 
 .blink {
@@ -779,4 +818,17 @@
 /* Glass panel for light theme */
 .glass-panel {
   background: rgba(0, 0, 0, 0.3);
+}
+
+/* Added new utility classes for subtle effects */
+.hologram-flicker {
+  animation: hologram-flicker 5s infinite;
+}
+
+.subtle-drift {
+  animation: subtle-drift 4s ease-in-out infinite;
+}
+
+.border-glow-pulse {
+  animation: border-glow-pulse 3s ease-in-out infinite;
 }

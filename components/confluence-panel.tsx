@@ -21,7 +21,7 @@ const REGIME_COLORS: Record<string, string> = {
   HVOL: "#a855f7",
 }
 
-const TIMEFRAMES = ["1m", "5m", "15m", "1H", "4H", "1D"]
+const TIMEFRAMES = ["1m", "5m", "15m", "1H", "4H", "1D", "1W", "1M"]
 
 interface SignalData {
   vp: number
@@ -252,7 +252,7 @@ export function ConfluencePanel() {
             </div>
 
             {/* Timeframe Rows */}
-            <div className="flex-1 space-y-1 overflow-hidden">
+            <div className="flex-1 space-y-1 overflow-y-auto scrollbar-thin pr-1">
               {regimeData.map((row) => (
                 <div
                   key={row.tf}

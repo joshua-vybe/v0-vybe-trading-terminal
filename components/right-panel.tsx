@@ -1,7 +1,7 @@
 "use client"
 
 import { ConfluencePanel } from "./confluence-panel"
-import { OrderEntry } from "./order-entry"
+import { StrategyControlPanel } from "./strategy-control-panel"
 
 export function RightPanel() {
   return (
@@ -10,9 +10,8 @@ export function RightPanel() {
         <ConfluencePanel />
       </div>
 
-      {/* Order Entry - fixed height, no shrink */}
       <div className="flex-shrink-0">
-        <OrderEntry />
+        <StrategyControlPanel />
       </div>
     </div>
   )

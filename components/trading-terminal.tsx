@@ -12,6 +12,8 @@ import { BacktesterTab } from "@/components/backtester-tab"
 import { SettingsTab } from "@/components/settings-tab"
 import { NeuralNetworkBg } from "./neural-network-bg"
 import { CircuitLines } from "./circuit-lines"
+import { CyberRain } from "./cyber-rain"
+import { AmbientParticles } from "./ambient-particles"
 
 export function TradingTerminal() {
   const [activeTab, setActiveTab] = useState<string>("TERMINAL")
@@ -70,13 +72,29 @@ export function TradingTerminal() {
     >
       <NeuralNetworkBg nodeCount={30} opacity={0.08} />
       <CircuitLines />
+      <CyberRain opacity={0.15} />
+      <AmbientParticles count={25} opacity={0.6} />
 
-      {/* Scanlines */}
       <div
-        className="pointer-events-none fixed inset-0 z-50 opacity-[0.015]"
+        className="pointer-events-none fixed inset-0 z-[5] opacity-[0.008]"
         style={{
           background:
-            "repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0, 255, 255, 0.02) 2px, rgba(0, 255, 255, 0.02) 4px)",
+            "repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0, 255, 255, 0.03) 2px, rgba(0, 255, 255, 0.03) 4px)",
+        }}
+      />
+
+      <div
+        className="pointer-events-none fixed top-0 left-0 w-96 h-96 z-[1]"
+        style={{
+          background: "radial-gradient(circle at top left, rgba(0, 255, 255, 0.03), transparent 70%)",
+          animation: "ambient-breathe 6s ease-in-out infinite",
+        }}
+      />
+      <div
+        className="pointer-events-none fixed bottom-0 right-0 w-96 h-96 z-[1]"
+        style={{
+          background: "radial-gradient(circle at bottom right, rgba(255, 0, 255, 0.03), transparent 70%)",
+          animation: "ambient-breathe 6s ease-in-out infinite 3s",
         }}
       />
 
@@ -86,6 +104,13 @@ export function TradingTerminal() {
         <AITerminal />
         <DockTabs activeTab={activeTab} onTabChange={setActiveTab} />
       </div>
+
+      <style jsx>{`
+        @keyframes ambient-breathe {
+          0%, 100% { opacity: 0.5; transform: scale(1); }
+          50% { opacity: 1; transform: scale(1.1); }
+        }
+      `}</style>
     </div>
   )
 }

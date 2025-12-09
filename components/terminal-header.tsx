@@ -177,7 +177,7 @@ export function TerminalHeader() {
       <div className="absolute inset-0 opacity-[0.03] pointer-events-none data-stream-bg" />
 
       <div className="flex items-center gap-4 relative z-10">
-        <VybeLogoSVG size="sm" />
+        <VybeLogoSVG size="sm" glitch={true} />
         <span className="text-[10px] text-cyan-500/50 tracking-wider">
           <GlitchText text="NEURAL v3.0" glitchIntensity="low" />
         </span>
