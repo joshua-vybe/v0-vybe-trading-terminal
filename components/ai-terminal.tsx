@@ -187,15 +187,24 @@ export function AITerminal() {
         {/* Input */}
         <form onSubmit={handleSubmit} className="flex items-center gap-2 relative z-10">
           <span className="glow-green text-sm">◈</span>
-          <input
-            ref={inputRef}
-            type="text"
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            placeholder="Interface with the neural cortex..."
-            className="flex-1 bg-transparent border-none outline-none text-[11px] glow-green placeholder:text-[#00ff8840]"
-          />
-          <span className={`text-[#00ff88] ${cursorVisible ? "opacity-100" : "opacity-0"}`}>█</span>
+          <div className="flex-1 relative">
+            <input
+              ref={inputRef}
+              type="text"
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              placeholder="Interface with the neural cortex..."
+              className="w-full bg-transparent border-none outline-none text-[11px] glow-green placeholder:text-[#00ff8840]"
+            />
+            <span
+              className={`absolute top-0 text-[#00ff88] pointer-events-none ${cursorVisible ? "opacity-100" : "opacity-0"}`}
+              style={{
+                left: input.length === 0 ? "0px" : `${Math.min(input.length * 6.6, 400)}px`,
+              }}
+            >
+              █
+            </span>
+          </div>
         </form>
       </div>
 
