@@ -17,21 +17,18 @@ const BOOT_SEQUENCE = [
   { text: "[CORE] Initializing neural mesh...", delay: 300 },
   { text: "[CORE] Loading synaptic trading modules...", delay: 600 },
   { text: "[CORE] Establishing quantum-encrypted channels...", delay: 900 },
-  { text: "[NET] Connecting to decentralized venues...", delay: 1200 },
-  { text: "  ├── HYPERLIQUID    [████████████] SYNCED", delay: 1500 },
-  { text: "  ├── ASTER          [████████████] SYNCED", delay: 1700 },
-  { text: "  ├── NADO           [████████████] SYNCED", delay: 1900 },
-  { text: "  └── ORDERLY        [████████████] SYNCED", delay: 2100 },
-  { text: "", delay: 2300 },
-  { text: "[SYS] Market data streams: ACTIVE", delay: 2400 },
-  { text: "[SYS] AI strategy cortex: ONLINE", delay: 2600 },
-  { text: "[SYS] Risk mitigation protocols: ENGAGED", delay: 2800 },
-  { text: "[SYS] Neural link bandwidth: 847 Tb/s", delay: 3000 },
-  { text: "", delay: 3200 },
-  { text: "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━", delay: 3300 },
-  { text: "", delay: 3400 },
-  { text: "NEURAL AUTHENTICATION REQUIRED", delay: 3500 },
-  { text: "", delay: 3600 },
+  { text: "[NET] Connecting to Hyperliquid...", delay: 1200 },
+  { text: "  └── HYPERLIQUID    [████████████] SYNCED", delay: 1500 },
+  { text: "", delay: 1700 },
+  { text: "[SYS] Market data streams: ACTIVE", delay: 1800 },
+  { text: "[SYS] AI strategy cortex: ONLINE", delay: 2000 },
+  { text: "[SYS] Risk mitigation protocols: ENGAGED", delay: 2200 },
+  { text: "[SYS] Neural link bandwidth: 847 Tb/s", delay: 2400 },
+  { text: "", delay: 2600 },
+  { text: "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━", delay: 2700 },
+  { text: "", delay: 2800 },
+  { text: "NEURAL AUTHENTICATION REQUIRED", delay: 2900 },
+  { text: "", delay: 3000 },
 ]
 
 const COMMANDS = {
@@ -51,7 +48,7 @@ const COMMANDS = {
     "  ├── CPU:        12.4%",
     "  ├── MEMORY:     2.1 GB / 8 GB",
     "  ├── NETWORK:    142ms latency",
-    "  ├── VENUES:     4/4 connected",
+    "  ├── VENUE:      HYPERLIQUID",
     "  └── UPTIME:     47d 12h 33m",
     "",
   ],
@@ -161,7 +158,7 @@ export function CLILanding({ onLogin }: CLILandingProps) {
         `│  NEURAL MEM:    128 GB           [████████░░░░] 67%  │`,
         `│  BANDWIDTH:     ${networkStats.bandwidth.toFixed(0)} Tb/s          [████████████] OK   │`,
         `│  LATENCY:       ${networkStats.latency.toFixed(0)}ms             [████████████] OK   │`,
-        `│  VENUES:        4/4 SYNCED       [████████████] 100% │`,
+        `│  VENUE:         HYPERLIQUID      [████████████] 100% │`,
         `│  UPTIME:        47d 12h 33m 21s                      │`,
         "└───────────────────────────────────────────────────────┘",
         "",
@@ -169,7 +166,7 @@ export function CLILanding({ onLogin }: CLILandingProps) {
     } else if (trimmed === "scan") {
       setCommandHistory([...newHistory, "", "[SCAN] Initializing neural scanner..."])
       setTimeout(() => setCommandHistory((prev) => [...prev, "[SCAN] Scanning frequency bands..."]), 300)
-      setTimeout(() => setCommandHistory((prev) => [...prev, "[SCAN] Found 4 active trading venues"]), 800)
+      setTimeout(() => setCommandHistory((prev) => [...prev, "[SCAN] Connected to Hyperliquid"]), 800)
       setTimeout(() => setCommandHistory((prev) => [...prev, "[SCAN] Found 2,847 connected traders"]), 1200)
       setTimeout(() => setCommandHistory((prev) => [...prev, "[SCAN] Network health: OPTIMAL"]), 1600)
       setTimeout(() => setCommandHistory((prev) => [...prev, ""]), 2000)

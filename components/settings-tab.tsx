@@ -1,10 +1,8 @@
 "use client"
 
 import { useState } from "react"
-import { useTheme, type ThemeName } from "@/contexts/theme-context"
 
 export function SettingsTab() {
-  const { theme, setTheme } = useTheme()
   const [settings, setSettings] = useState({
     scanlines: true,
     flicker: true,
@@ -20,13 +18,6 @@ export function SettingsTab() {
     nado: "",
     orderly: "ord_****************************",
   })
-
-  const themes: { id: ThemeName; label: string }[] = [
-    { id: "DARK_CRT", label: "DARK_CRT" },
-    { id: "MATRIX", label: "MATRIX" },
-    { id: "AMBER", label: "AMBER" },
-    { id: "LIGHT_CRT", label: "LIGHT_CRT" },
-  ]
 
   return (
     <div className="h-full flex flex-col gap-3 overflow-auto">
@@ -45,25 +36,6 @@ export function SettingsTab() {
           <pre className="text-[10px] glow-primary mb-3">◈ DISPLAY SETTINGS</pre>
 
           <div className="space-y-3 text-[10px]">
-            <div className="flex items-center justify-between">
-              <span className="text-[var(--theme-text-dim)]">THEME</span>
-              <div className="flex gap-2">
-                {themes.map((t) => (
-                  <button
-                    key={t.id}
-                    onClick={() => setTheme(t.id)}
-                    className={`px-3 py-1 border transition-all ${
-                      theme === t.id
-                        ? "border-[var(--theme-primary)] glow-primary"
-                        : "border-[var(--theme-border)] text-[var(--theme-text-dim)] hover:border-[var(--theme-primary)]"
-                    }`}
-                  >
-                    {t.label}
-                  </button>
-                ))}
-              </div>
-            </div>
-
             <div className="flex items-center justify-between">
               <span className="text-[var(--theme-text-dim)]">SCANLINES</span>
               <button
