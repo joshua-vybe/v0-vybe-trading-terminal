@@ -3,6 +3,7 @@
 import { useState } from "react"
 
 type OrderType = "market" | "limit" | "stop-limit" | "stop-market" | "trailing" | "twap"
+type MarketType = "perp" | "spot"
 
 const LEVERAGE_PRESETS = [1, 5, 10, 20, 50, 100]
 
@@ -18,6 +19,7 @@ export function OrderEntry() {
   const [postOnly, setPostOnly] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [showLeverageSelector, setShowLeverageSelector] = useState(false)
+  const [marketType, setMarketType] = useState<MarketType>("perp")
 
   const handleSubmit = () => {
     setIsSubmitting(true)
@@ -27,11 +29,34 @@ export function OrderEntry() {
   const needsPrice = orderType === "limit" || orderType === "stop-limit"
   const needsStopPrice = orderType === "stop-limit" || orderType === "stop-market"
   const needsTrail = orderType === "trailing"
+  const isSpot = marketType === "spot"
 
   return (
-    <div className="neon-border glass-panel p-2 text-[11px] h-[260px] flex flex-col relative">
+    <div className="neon-border glass-panel p-2 text-[11px] h-[280px] flex flex-col relative">
       <div className="flex items-center justify-between mb-1">
-        <span className="text-[#00ffff60]">ORDER • ORDERLY</span>
+        <div className="flex items-center gap-1">
+          <button
+            onClick={() => setMarketType("perp")}
+            className={`px-2 py-0.5 text-[9px] font-bold border transition-all ${
+              marketType === "perp"
+                ? "border-[#00ffff] bg-[#00ffff15] text-[#00ffff]"
+                : "border-[#ffffff20] text-[#ffffff40] hover:border-[#ffffff40]"
+            }`}
+          >
+            PERP
+          </button>
+          <button
+            onClick={() => setMarketType("spot")}
+            className={`px-2 py-0.5 text-[9px] font-bold border transition-all ${
+              marketType === "spot"
+                ? "border-[#22c55e] bg-[#22c55e15] text-[#22c55e]"
+                : "border-[#ffffff20] text-[#ffffff40] hover:border-[#ffffff40]"
+            }`}
+          >
+            SPOT
+          </button>
+          <span className="text-[#ffffff30] text-[9px] ml-1">HYPERLIQUID</span>
+        </div>
         <div className="flex gap-2 text-[10px]">
           <label className="flex items-center gap-0.5 cursor-pointer">
             <input
@@ -39,8 +64,9 @@ export function OrderEntry() {
               checked={reduceOnly}
               onChange={(e) => setReduceOnly(e.target.checked)}
               className="w-2.5 h-2.5 accent-[#00ffff]"
+              disabled={isSpot}
             />
-            <span className="text-[#ffffff50]">RDC</span>
+            <span className={`${isSpot ? "text-[#ffffff20]" : "text-[#ffffff50]"}`}>RDC</span>
           </label>
           <label className="flex items-center gap-0.5 cursor-pointer">
             <input
@@ -54,15 +80,19 @@ export function OrderEntry() {
         </div>
       </div>
 
-      {/* Side Buttons */}
+      {/* Side Buttons - Updated labels for spot (BUY/SELL) vs perp (LONG/SHORT) */}
       <div className="flex gap-1 mb-1">
         <button
           onClick={() => setSide("long")}
           className={`flex-1 py-1 font-bold border transition-all text-[10px] ${
-            side === "long" ? "border-[#00ffff] glow-cyan bg-[#00ffff15]" : "border-[#ffffff20] text-[#ffffff40]"
+            side === "long"
+              ? isSpot
+                ? "border-[#22c55e] glow-green bg-[#22c55e15] text-[#22c55e]"
+                : "border-[#00ffff] glow-cyan bg-[#00ffff15]"
+              : "border-[#ffffff20] text-[#ffffff40]"
           }`}
         >
-          ▲ LONG
+          {isSpot ? "◆ BUY" : "▲ LONG"}
         </button>
         <button
           onClick={() => setSide("short")}
@@ -70,7 +100,7 @@ export function OrderEntry() {
             side === "short" ? "border-[#ff00ff] glow-magenta bg-[#ff00ff15]" : "border-[#ffffff20] text-[#ffffff40]"
           }`}
         >
-          ▼ SHORT
+          {isSpot ? "◇ SELL" : "▼ SHORT"}
         </button>
       </div>
 
@@ -82,7 +112,9 @@ export function OrderEntry() {
             onClick={() => setOrderType(type)}
             className={`py-0.5 border text-[9px] uppercase transition-all ${
               orderType === type
-                ? "border-[#00ffff] glow-cyan bg-[#00ffff10]"
+                ? isSpot
+                  ? "border-[#22c55e] glow-green bg-[#22c55e10]"
+                  : "border-[#00ffff] glow-cyan bg-[#00ffff10]"
                 : "border-[#ffffff15] text-[#ffffff50] hover:border-[#ffffff30]"
             }`}
           >
@@ -98,33 +130,47 @@ export function OrderEntry() {
       </div>
 
       <div className="grid grid-cols-2 gap-1 mb-1">
-        {/* Size */}
+        {/* Size - Updated label for spot vs perp */}
         <div>
-          <div className="text-[#00ffff40] text-[9px] mb-0.5">SIZE (BTC)</div>
+          <div className={`text-[9px] mb-0.5 ${isSpot ? "text-[#22c55e60]" : "text-[#00ffff40]"}`}>
+            SIZE ({isSpot ? "QTY" : "BTC"})
+          </div>
           <input
             type="text"
             value={size}
             onChange={(e) => setSize(e.target.value)}
-            className="w-full bg-black border border-[#00ffff30] px-1 py-0.5 text-[11px] glow-cyan focus:border-[#00ffff] focus:outline-none"
+            className={`w-full bg-black border px-1 py-0.5 text-[11px] focus:outline-none ${
+              isSpot
+                ? "border-[#22c55e30] glow-green focus:border-[#22c55e]"
+                : "border-[#00ffff30] glow-cyan focus:border-[#00ffff]"
+            }`}
           />
         </div>
 
-        {/* Leverage Selector Button */}
+        {/* Leverage Selector Button - Disabled for spot, shows 1x */}
         <div>
-          <div className="text-[#facc1580] text-[9px] mb-0.5">LEVERAGE</div>
-          <button
-            type="button"
-            onClick={() => setShowLeverageSelector(!showLeverageSelector)}
-            className="w-full bg-black border border-[#facc1550] px-1 py-0.5 text-[11px] text-[#facc15] font-bold hover:border-[#facc15] hover:bg-[#facc1510] transition-all flex items-center justify-center gap-1"
-          >
-            <span>{leverage}x</span>
-            <span className="text-[8px]">▼</span>
-          </button>
+          <div className={`text-[9px] mb-0.5 ${isSpot ? "text-[#ffffff20]" : "text-[#facc1580]"}`}>
+            {isSpot ? "NO LEVERAGE" : "LEVERAGE"}
+          </div>
+          {isSpot ? (
+            <div className="w-full bg-black/50 border border-[#ffffff15] px-1 py-0.5 text-[11px] text-[#ffffff30] text-center">
+              1x (SPOT)
+            </div>
+          ) : (
+            <button
+              type="button"
+              onClick={() => setShowLeverageSelector(!showLeverageSelector)}
+              className="w-full bg-black border border-[#facc1550] px-1 py-0.5 text-[11px] text-[#facc15] font-bold hover:border-[#facc15] hover:bg-[#facc1510] transition-all flex items-center justify-center gap-1"
+            >
+              <span>{leverage}x</span>
+              <span className="text-[8px]">▼</span>
+            </button>
+          )}
         </div>
       </div>
 
-      {showLeverageSelector && (
-        <div className="absolute left-2 right-2 top-[115px] z-50 bg-black/95 border border-[#facc15] p-2 shadow-lg shadow-[#facc1520]">
+      {showLeverageSelector && !isSpot && (
+        <div className="absolute left-2 right-2 top-[135px] z-50 bg-black/95 border border-[#facc15] p-2 shadow-lg shadow-[#facc1520]">
           <div className="text-[9px] text-[#facc15] mb-2">SELECT LEVERAGE</div>
 
           {/* Preset Buttons */}
@@ -236,24 +282,36 @@ export function OrderEntry() {
         </div>
       </div>
 
-      {/* Submit Button */}
+      {/* Submit Button - Updated styling for spot vs perp */}
       <button
         onClick={handleSubmit}
         disabled={isSubmitting}
         className={`w-full py-1.5 font-bold border transition-all text-[11px] mt-auto ${
-          side === "long"
-            ? "border-[#00ffff] glow-cyan hover:bg-[#00ffff20] text-[#00ffff]"
-            : "border-[#ff00ff] glow-magenta hover:bg-[#ff00ff20] text-[#ff00ff]"
+          isSpot
+            ? side === "long"
+              ? "border-[#22c55e] glow-green hover:bg-[#22c55e20] text-[#22c55e]"
+              : "border-[#ff00ff] glow-magenta hover:bg-[#ff00ff20] text-[#ff00ff]"
+            : side === "long"
+              ? "border-[#00ffff] glow-cyan hover:bg-[#00ffff20] text-[#00ffff]"
+              : "border-[#ff00ff] glow-magenta hover:bg-[#ff00ff20] text-[#ff00ff]"
         } ${isSubmitting ? "animate-pulse" : ""}`}
       >
-        {isSubmitting ? "◎ TRANSMITTING..." : `◉ ${side.toUpperCase()} ${leverage}x ${orderType.toUpperCase()}`}
+        {isSubmitting
+          ? "◎ TRANSMITTING..."
+          : isSpot
+            ? `◉ ${side === "long" ? "BUY" : "SELL"} ${orderType.toUpperCase()}`
+            : `◉ ${side.toUpperCase()} ${leverage}x ${orderType.toUpperCase()}`}
       </button>
 
-      {/* Quick Stats Row */}
+      {/* Quick Stats Row - Updated for spot vs perp */}
       <div className="mt-1 flex justify-between text-[9px] text-[#ffffff40]">
-        <span>BAL: 2.45 BTC</span>
-        <span>FEE: 0.02%</span>
-        <span>LIQ: ${(43292 - (43292 / leverage) * 0.9).toFixed(0)}</span>
+        <span>BAL: {isSpot ? "12,450 USDC" : "2.45 BTC"}</span>
+        <span>FEE: {isSpot ? "0.01%" : "0.02%"}</span>
+        {isSpot ? (
+          <span className="text-[#22c55e]">SPOT</span>
+        ) : (
+          <span>LIQ: ${(43292 - (43292 / leverage) * 0.9).toFixed(0)}</span>
+        )}
       </div>
     </div>
   )
