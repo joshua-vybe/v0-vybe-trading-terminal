@@ -694,6 +694,27 @@
   }
 }
 
+/* Added shimmer animation for quantum glow effect */
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+/* Added quantum pulse animation */
+@keyframes quantum-pulse {
+  0%,
+  100% {
+    box-shadow: 0 0 10px rgba(168, 85, 247, 0.3), 0 0 20px rgba(0, 255, 255, 0.2);
+  }
+  50% {
+    box-shadow: 0 0 20px rgba(168, 85, 247, 0.5), 0 0 40px rgba(0, 255, 255, 0.3), 0 0 60px rgba(168, 85, 247, 0.2);
+  }
+}
+
 /* Netrunner utility classes */
 .data-rain {
   animation: data-rain 3s linear infinite;
@@ -745,6 +766,15 @@
 
 .static-noise {
   animation: static-noise 0.2s steps(10) infinite;
+}
+
+/* Added quantum utility classes */
+.quantum-glow {
+  animation: quantum-pulse 2s ease-in-out infinite;
+}
+
+.shimmer {
+  animation: shimmer 2s infinite linear;
 }
 
 .crt-screen {

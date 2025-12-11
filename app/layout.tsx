@@ -3,6 +3,7 @@ import type { Metadata, Viewport } from "next"
 import { IBM_Plex_Mono } from "next/font/google"
 import { Analytics } from "@vercel/analytics/next"
 import { ThemeProvider } from "@/contexts/theme-context"
+import { ConfluenceProvider } from "@/contexts/confluence-context"
 import "./globals.css"
 
 const ibmPlexMono = IBM_Plex_Mono({
@@ -15,7 +16,7 @@ export const metadata: Metadata = {
   title: "VYBE TERMINAL v3.0 | Retro-Futuristic Trading",
   description: "The ultimate CRT ASCII trading terminal for multi-venue perpetual futures trading",
   keywords: ["trading", "terminal", "crypto", "perpetuals", "hyperliquid", "defi"],
-    generator: 'v0.app'
+  generator: "v0.app",
 }
 
 export const viewport: Viewport = {
@@ -34,7 +35,9 @@ export default function RootLayout({
   return (
     <html lang="en" className="dark theme-dark-crt">
       <body className={`${ibmPlexMono.className} antialiased bg-background text-foreground overflow-hidden`}>
-        <ThemeProvider>{children}</ThemeProvider>
+        <ThemeProvider>
+          <ConfluenceProvider>{children}</ConfluenceProvider>
+        </ThemeProvider>
         <Analytics />
       </body>
     </html>

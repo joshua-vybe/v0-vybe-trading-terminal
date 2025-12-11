@@ -2,28 +2,7 @@
 
 import { useEffect, useRef, useState, useMemo } from "react"
 import * as LightweightCharts from "lightweight-charts"
-
-type Timeframe = "1m" | "5m" | "15m" | "30m" | "1h" | "4h" | "1d" | "1w"
-
-const TIMEFRAMES: { value: Timeframe; label: string }[] = [
-  { value: "1m", label: "1m" },
-  { value: "5m", label: "5m" },
-  { value: "15m", label: "15m" },
-  { value: "30m", label: "30m" },
-  { value: "1h", label: "1H" },
-  { value: "4h", label: "4H" },
-  { value: "1d", label: "1D" },
-  { value: "1w", label: "1W" },
-]
-
-const SIGNAL_LAYERS = [
-  { id: "vp", weight: 0.3 },
-  { id: "cvd", weight: 0.25 },
-  { id: "breakout", weight: 0.3 },
-  { id: "ob_fvg", weight: 0.2 },
-  { id: "regime", weight: 0.25 },
-  { id: "htf", weight: 0.15 },
-]
+import { useConfluence, TIMEFRAMES } from "@/contexts/confluence-context"
 
 interface Position {
   id: string
@@ -53,54 +32,13 @@ interface CandleData {
   close: number
 }
 
-export function useConfluenceScore() {
-  const [signals, setSignals] = useState({
-    vp: 85,
-    cvd: 72,
-    breakout: 90,
-    ob_fvg: 68,
-    regime: 78,
-    htf: 82,
-  })
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setSignals((prev) => ({
-        vp: Math.max(0, Math.min(100, prev.vp + (Math.random() - 0.5) * 8)),
-        cvd: Math.max(0, Math.min(100, prev.cvd + (Math.random() - 0.5) * 10)),
-        breakout: Math.max(0, Math.min(100, prev.breakout + (Math.random() - 0.5) * 6)),
-        ob_fvg: Math.max(0, Math.min(100, prev.ob_fvg + (Math.random() - 0.5) * 8)),
-        regime: Math.max(0, Math.min(100, prev.regime + (Math.random() - 0.5) * 5)),
-        htf: Math.max(0, Math.min(100, prev.htf + (Math.random() - 0.5) * 4)),
-      }))
-    }, 1500)
-    return () => clearInterval(interval)
-  }, [])
-
-  const score = useMemo(() => {
-    const weightedSum =
-      signals.vp * 0.3 +
-      signals.cvd * 0.25 +
-      signals.breakout * 0.3 +
-      signals.ob_fvg * 0.2 +
-      signals.regime * 0.25 +
-      signals.htf * 0.15
-    return weightedSum / 1.45
-  }, [signals])
-
-  return { score, signals }
-}
-
 export function TradingViewChart() {
   const chartContainerRef = useRef<HTMLDivElement>(null)
   const chartRef = useRef<LightweightCharts.IChartApi | null>(null)
   const candleSeriesRef = useRef<any>(null)
-  const [timeframe, setTimeframe] = useState<Timeframe>("5m")
+  const { timeframe, setTimeframe, totalConfluence, currentAction, isQuantumEnhanced } = useConfluence()
   const [currentPrice, setCurrentPrice] = useState(43293.51)
   const [priceChange, setPriceChange] = useState(2.34)
-
-  const { score: confluenceScore } = useConfluenceScore()
-  const [currentAction, setCurrentAction] = useState("Momentum Breakout")
 
   const getScoreColor = (score: number) => {
     if (score >= 88) return "#22c55e"
@@ -113,24 +51,6 @@ export function TradingViewChart() {
     if (score >= 78) return "REGULAR"
     return "NO TRADE"
   }
-
-  // Update action randomly
-  useEffect(() => {
-    const actions = [
-      "Momentum Breakout",
-      "Mean Reversion",
-      "Trend Continuation",
-      "Range Scalp",
-      "Liquidity Sweep",
-      "Waiting...",
-    ]
-    const interval = setInterval(() => {
-      if (Math.random() > 0.92) {
-        setCurrentAction(actions[Math.floor(Math.random() * actions.length)])
-      }
-    }, 2000)
-    return () => clearInterval(interval)
-  }, [])
 
   const positions: Position[] = useMemo(
     () => [
@@ -261,7 +181,6 @@ export function TradingViewChart() {
 
     positions.forEach((pos) => {
       const pnlSign = pos.pnl >= 0 ? "+" : ""
-      const pnlColor = pos.pnl >= 0 ? "#22c55e" : "#ef4444"
 
       candleSeries.createPriceLine({
         price: pos.entry,
@@ -351,7 +270,7 @@ export function TradingViewChart() {
       {/* Header */}
       <div className="flex items-center justify-between mb-2 shrink-0">
         <div className="flex items-center gap-3">
-          <span className="text-[10px] text-cyan-600 tracking-wider">ORDERLY</span>
+          <span className="text-[10px] text-cyan-600 tracking-wider">HYPERLIQUID</span>
           <span className="glow-cyan text-sm font-bold">BTC-PERP</span>
           <span className="text-xl glow-cyan glow-pulse font-mono">
             ${currentPrice.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
@@ -363,32 +282,34 @@ export function TradingViewChart() {
         </div>
 
         <div className="flex items-center gap-4">
-          {/* Confluence Score Badge */}
           <div
-            className="flex items-center gap-2 px-3 py-1 border rounded"
+            className={`flex items-center gap-2 px-3 py-1 border rounded ${isQuantumEnhanced ? "quantum-glow" : ""}`}
             style={{
-              borderColor: getScoreColor(confluenceScore),
-              backgroundColor: `${getScoreColor(confluenceScore)}10`,
+              borderColor: isQuantumEnhanced ? "#8b5cf6" : getScoreColor(totalConfluence),
+              backgroundColor: isQuantumEnhanced ? "rgba(139, 92, 246, 0.1)" : `${getScoreColor(totalConfluence)}10`,
             }}
           >
             <div
               className="text-lg font-bold font-mono"
               style={{
-                color: getScoreColor(confluenceScore),
-                textShadow: `0 0 10px ${getScoreColor(confluenceScore)}80`,
+                color: isQuantumEnhanced ? "#8b5cf6" : getScoreColor(totalConfluence),
+                textShadow: `0 0 10px ${isQuantumEnhanced ? "#8b5cf680" : getScoreColor(totalConfluence) + "80"}`,
               }}
             >
-              {confluenceScore.toFixed(1)}
+              {totalConfluence.toFixed(1)}
             </div>
             <div className="text-left">
-              <div className="text-[9px] font-bold tracking-wider" style={{ color: getScoreColor(confluenceScore) }}>
-                {getScoreText(confluenceScore)}
+              <div
+                className="text-[9px] font-bold tracking-wider"
+                style={{ color: isQuantumEnhanced ? "#8b5cf6" : getScoreColor(totalConfluence) }}
+              >
+                {getScoreText(totalConfluence)}
+                {isQuantumEnhanced && " Q+"}
               </div>
               <div className="text-[8px] text-cyan-500 opacity-80">{currentAction}</div>
             </div>
           </div>
 
-          {/* Timeframe Buttons */}
           <div className="flex gap-1">
             {TIMEFRAMES.map((tf) => (
               <button

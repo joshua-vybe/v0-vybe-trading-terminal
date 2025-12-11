@@ -47,9 +47,9 @@ export function AITerminal() {
     setIsTyping(true)
 
     setProcessingStage("PARSING QUERY")
-    setTimeout(() => setProcessingStage("ANALYZING MARKET DATA"), 400)
-    setTimeout(() => setProcessingStage("GENERATING STRATEGY"), 800)
-    setTimeout(() => setProcessingStage("RUNNING SIMULATIONS"), 1200)
+    setTimeout(() => setProcessingStage("QUANTUM LAYER PROCESSING"), 400)
+    setTimeout(() => setProcessingStage("VQC CLASSIFICATION"), 800)
+    setTimeout(() => setProcessingStage("GENERATING STRATEGY"), 1200)
 
     setTimeout(() => {
       const aiResponse = generateAIResponse(userMessage)
@@ -67,7 +67,7 @@ export function AITerminal() {
   const generateAIResponse = (query: string): { short: string; detailed?: string } => {
     if (query.toLowerCase().includes("strategy")) {
       return {
-        short: "◈ STRATEGY SYNTHESIS COMPLETE. NEURAL ANALYSIS READY...",
+        short: "◈ QUANTUM-ENHANCED STRATEGY SYNTHESIS COMPLETE. NEURAL ANALYSIS READY...",
         detailed: `
 ╔══════════════════════════════════════════════════════════════════════════════╗
 ║  ██╗   ██╗██╗   ██╗██████╗ ███████╗     █████╗ ██╗                           ║
@@ -77,18 +77,20 @@ export function AITerminal() {
 ║   ╚████╔╝    ██║   ██████╔╝███████╗    ██║  ██║██║                           ║
 ║    ╚═══╝     ╚═╝   ╚═════╝ ╚══════╝    ╚═╝  ╚═╝╚═╝                           ║
 ║                                                                              ║
-║                    NEURAL STRATEGY ANALYSIS v3.0                             ║
+║              QUANTUM NEURAL STRATEGY ANALYSIS v5.0                           ║
 ╠══════════════════════════════════════════════════════════════════════════════╣
 ║                                                                              ║
 ║  QUERY: "${query}"                                                           ║
-║  NEURAL CONFIDENCE: ████████████████░░░░ 82%                                ║
+║  QUANTUM CONFIDENCE: ████████████████████ 95.8%                             ║
+║  VQC CLASSIFICATION: TRENDING (72.4%)                                        ║
 ║                                                                              ║
 ║  ┌─────────────────────────────────────────────────────────────────────────┐ ║
-║  │ ◈ RECOMMENDED STRATEGY: MOMENTUM SCALPING                               │ ║
+║  │ ◈ RECOMMENDED STRATEGY: QUANTUM MOMENTUM SCALPING                       │ ║
 ║  │                                                                         │ ║
 ║  │ ENTRY CONDITIONS:                                                       │ ║
 ║  │   ├── RSI(14) crosses above 30 from oversold                           │ ║
 ║  │   ├── Price above VWAP                                                  │ ║
+║  │   ├── Quantum regime: TRENDING (>70% confidence)                       │ ║
 ║  │   └── Volume > 1.5x 20-period average                                  │ ║
 ║  │                                                                         │ ║
 ║  │ EXIT CONDITIONS:                                                        │ ║
@@ -97,15 +99,16 @@ export function AITerminal() {
 ║  │   └── Trailing stop: 0.3% after +0.5%                                  │ ║
 ║  └─────────────────────────────────────────────────────────────────────────┘ ║
 ║                                                                              ║
-║  ◇ BACKTEST RESULTS (90 DAYS):                                              ║
+║  ◇ QUANTUM-ENHANCED BACKTEST RESULTS (90 DAYS):                             ║
 ║  ┌─────────────────────────────────────────────────────────────────────────┐ ║
-║  │ Total Trades: 247    │ Win Rate: 68.4%    │ Profit Factor: 2.14       │ ║
-║  │ Avg Win: +0.72%      │ Avg Loss: -0.38%   │ Max Drawdown: -4.2%       │ ║
-║  │ Sharpe: 2.31         │ Sortino: 3.45      │ Total Return: +34.7%      │ ║
+║  │ Total Trades: 247    │ Win Rate: 72.1%    │ Profit Factor: 2.84       │ ║
+║  │ Avg Win: +0.82%      │ Avg Loss: -0.34%   │ Max Drawdown: -3.1%       │ ║
+║  │ Sharpe: 2.94         │ Sortino: 4.12      │ Total Return: +41.2%      │ ║
+║  │ VQC Accuracy: 95.8%  │ Q-Contribution: +12.4 pts                      │ ║
 ║  └─────────────────────────────────────────────────────────────────────────┘ ║
 ║                                                                              ║
 ║  RISK ASSESSMENT: ████████░░░░░░░░░░░░ MEDIUM                               ║
-║  MARKET FIT: █████████████████░░░ HIGH                                      ║
+║  QUANTUM EDGE: █████████████████░░░ EXCEPTIONAL                             ║
 ║                                                                              ║
 ║  ┌──────────────────┐  ┌──────────────────┐  ┌──────────────────┐           ║
 ║  │  ◈ DEPLOY NOW    │  │ ◇ RUN BACKTEST   │  │   ◆ MODIFY       │           ║
@@ -114,7 +117,7 @@ export function AITerminal() {
 ╚══════════════════════════════════════════════════════════════════════════════╝`,
       }
     }
-    return { short: "◈ NEURAL ANALYSIS COMPLETE. DATA SYNTHESIZED." }
+    return { short: "◈ QUANTUM NEURAL ANALYSIS COMPLETE. DATA SYNTHESIZED." }
   }
 
   const activityBars = Array.from({ length: 8 }, (_, i) => {
@@ -128,7 +131,7 @@ export function AITerminal() {
         <div
           className="absolute inset-0 opacity-[0.03] pointer-events-none"
           style={{
-            background: `radial-gradient(ellipse at ${50 + Math.sin(Date.now() / 1000) * 20}% 50%, rgba(0, 255, 136, 0.3), transparent 70%)`,
+            background: `radial-gradient(ellipse at ${50 + Math.sin(Date.now() / 1000) * 20}% 50%, rgba(168, 85, 247, 0.3), transparent 70%)`,
           }}
         />
 
@@ -136,21 +139,21 @@ export function AITerminal() {
           <div className="flex items-center gap-2">
             <StatusIndicator status="online" showPulse />
             <span className="text-[10px] text-[#00ff88]">
-              <GlitchText text="VYBE NEURAL CORTEX v3.0" glitchIntensity="low" />
+              <GlitchText text="VYBE NEURAL CORTEX v5.0" glitchIntensity="low" />
             </span>
             <span className="text-[10px] text-[#00ffff40]">│</span>
-            <span className="text-[10px] text-[#00ffff40]">SYNAPTIC LINK ACTIVE</span>
+            <span className="text-[10px] text-[#a855f7]">QUANTUM EDGE ACTIVE</span>
           </div>
 
           <div className="flex items-end gap-[2px] h-3">
             {activityBars.map((height, i) => (
               <div
                 key={i}
-                className="w-[3px] bg-gradient-to-t from-cyan-500 to-green-400 transition-all duration-200"
+                className="w-[3px] bg-gradient-to-t from-purple-500 to-cyan-400 transition-all duration-200"
                 style={{ height: `${height}%`, opacity: 0.6 + height / 200 }}
               />
             ))}
-            <span className="text-[8px] text-cyan-400/60 ml-1 tabular-nums">{neuralActivity.toFixed(0)}%</span>
+            <span className="text-[8px] text-purple-400/60 ml-1 tabular-nums">{neuralActivity.toFixed(0)}%</span>
           </div>
         </div>
 
@@ -170,13 +173,13 @@ export function AITerminal() {
               <span className="animate-pulse">◄</span>
               <span>{processingStage}</span>
               <span className="flex gap-[2px]">
-                <span className="w-1 h-1 bg-green-400 rounded-full animate-bounce" style={{ animationDelay: "0ms" }} />
+                <span className="w-1 h-1 bg-purple-400 rounded-full animate-bounce" style={{ animationDelay: "0ms" }} />
                 <span
-                  className="w-1 h-1 bg-green-400 rounded-full animate-bounce"
+                  className="w-1 h-1 bg-purple-400 rounded-full animate-bounce"
                   style={{ animationDelay: "150ms" }}
                 />
                 <span
-                  className="w-1 h-1 bg-green-400 rounded-full animate-bounce"
+                  className="w-1 h-1 bg-purple-400 rounded-full animate-bounce"
                   style={{ animationDelay: "300ms" }}
                 />
               </span>
@@ -193,7 +196,7 @@ export function AITerminal() {
               type="text"
               value={input}
               onChange={(e) => setInput(e.target.value)}
-              placeholder="Interface with the neural cortex..."
+              placeholder="Interface with the quantum neural cortex..."
               className="w-full bg-transparent border-none outline-none text-[11px] glow-green placeholder:text-[#00ff8840]"
             />
             <span
@@ -215,7 +218,7 @@ export function AITerminal() {
           <div
             className="absolute inset-0 opacity-10 pointer-events-none"
             style={{
-              background: "radial-gradient(ellipse at center, rgba(0, 255, 136, 0.2), transparent 70%)",
+              background: "radial-gradient(ellipse at center, rgba(168, 85, 247, 0.2), transparent 70%)",
             }}
           />
 
@@ -223,7 +226,7 @@ export function AITerminal() {
             <div className="neon-border glass-panel p-6 relative">
               {/* Scan line effect */}
               <div
-                className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-green-400 to-transparent opacity-50"
+                className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-purple-400 to-transparent opacity-50"
                 style={{ animation: "grid-scan 2s linear infinite" }}
               />
 
@@ -236,10 +239,10 @@ export function AITerminal() {
                 >
                   [ CLOSE INTERFACE ]
                 </button>
-                <button className="px-6 py-2 border border-[#00ffff] glow-cyan text-[11px] hover:bg-[#00ffff20] transition-all">
-                  [ DEPLOY TO MAINNET ]
+                <button className="px-6 py-2 border border-[#a855f7] glow-magenta text-[11px] hover:bg-[#a855f720] transition-all">
+                  [ QUANTUM DEPLOY ]
                 </button>
-                <button className="px-6 py-2 border border-[#ff00ff] glow-magenta text-[11px] hover:bg-[#ff00ff20] transition-all">
+                <button className="px-6 py-2 border border-[#00ffff] glow-cyan text-[11px] hover:bg-[#00ffff20] transition-all">
                   [ RUN SIMULATION ]
                 </button>
               </div>

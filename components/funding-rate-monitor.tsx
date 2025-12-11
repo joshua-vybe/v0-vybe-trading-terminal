@@ -52,7 +52,7 @@ export function FundingRateMonitor() {
   })
 
   return (
-    <div className="neon-border glass-panel p-2 h-full flex flex-col text-[10px]">
+    <div className="p-2 h-full flex flex-col text-[10px]">
       {/* Header */}
       <div className="flex items-center justify-between mb-2">
         <div className="flex items-center gap-1.5">
