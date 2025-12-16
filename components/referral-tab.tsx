@@ -308,7 +308,7 @@ export function ReferralTab() {
       {/* Modals */}
       {showFeeModal && (
         <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4">
-          <div className="neon-border glass-panel p-4 max-w-2xl w-full max-h-[80vh] overflow-auto">
+          <div className="neon-border glass-panel p-4 max-w-xl w-full max-h-[80vh] overflow-auto">
             <div className="flex items-center justify-between mb-4">
               <div className="text-lg font-bold text-[#00ffff]">TRADER FEE TIERS</div>
               <button
@@ -349,7 +349,7 @@ export function ReferralTab() {
 
       {showRewardModal && (
         <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4">
-          <div className="neon-border glass-panel p-4 max-w-2xl w-full max-h-[80vh] overflow-auto">
+          <div className="neon-border glass-panel p-4 max-w-xl w-full max-h-[80vh] overflow-auto">
             <div className="flex items-center justify-between mb-4">
               <div className="text-lg font-bold text-[#22c55e]">REFERRAL REWARD TIERS</div>
               <button
