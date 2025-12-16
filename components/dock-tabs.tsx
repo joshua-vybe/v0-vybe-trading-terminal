@@ -12,7 +12,8 @@ const tabs = [
   { id: "PORTFOLIO", icon: "◈", hint: "ASSETS" },
   { id: "STRATEGIES", icon: "◆", hint: "ALGOS" },
   { id: "BACKTESTER", icon: "◇", hint: "SIMULATE" },
-  { id: "SETTINGS", icon: "◎", hint: "CONFIG" },
+  { id: "REFERRAL", icon: "◎", hint: "REWARDS" },
+  { id: "SETTINGS", icon: "◈", hint: "CONFIG" },
 ]
 
 export function DockTabs({ activeTab, onTabChange }: DockTabsProps) {
@@ -22,6 +23,7 @@ export function DockTabs({ activeTab, onTabChange }: DockTabsProps) {
     PORTFOLIO: 0,
     STRATEGIES: 0,
     BACKTESTER: 0,
+    REFERRAL: 0,
     SETTINGS: 0,
   })
 
@@ -31,6 +33,7 @@ export function DockTabs({ activeTab, onTabChange }: DockTabsProps) {
         ...prev,
         TERMINAL: Math.random() > 0.3 ? prev.TERMINAL + 1 : prev.TERMINAL,
         STRATEGIES: Math.random() > 0.7 ? prev.STRATEGIES + 1 : prev.STRATEGIES,
+        REFERRAL: Math.random() > 0.5 ? prev.REFERRAL + 1 : prev.REFERRAL,
       }))
     }, 500)
     return () => clearInterval(interval)
@@ -72,7 +75,7 @@ export function DockTabs({ activeTab, onTabChange }: DockTabsProps) {
               />
             )}
 
-            {(tab.id === "TERMINAL" || tab.id === "STRATEGIES") && activity[tab.id] > 0 && (
+            {(tab.id === "TERMINAL" || tab.id === "STRATEGIES" || tab.id === "REFERRAL") && activity[tab.id] > 0 && (
               <div className="absolute top-1 right-2 flex items-center gap-1">
                 <div
                   className="w-1.5 h-1.5 bg-green-400 rounded-full"

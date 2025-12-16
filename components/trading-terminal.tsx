@@ -9,6 +9,7 @@ import { TerminalHeader } from "@/components/terminal-header"
 import { PortfolioTab } from "@/components/portfolio-tab"
 import { StrategiesTab } from "@/components/strategies-tab"
 import { BacktesterTab } from "@/components/backtester-tab"
+import { ReferralTab } from "@/components/referral-tab"
 import { SettingsTab } from "@/components/settings-tab"
 import { DeltaNeutralDashboard } from "@/components/delta-neutral-dashboard"
 import { NeuralNetworkBg } from "./neural-network-bg"
@@ -92,6 +93,12 @@ export function TradingTerminal() {
         return (
           <div className="flex-1 min-h-0 fade-in-up">
             <BacktesterTab />
+          </div>
+        )
+      case "REFERRAL":
+        return (
+          <div className="flex-1 min-h-0 fade-in-up">
+            <ReferralTab />
           </div>
         )
       case "SETTINGS":
