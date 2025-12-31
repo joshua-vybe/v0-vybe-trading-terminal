@@ -1,15 +1,21 @@
 import type React from "react"
 import type { Metadata, Viewport } from "next"
-import { IBM_Plex_Mono } from "next/font/google"
+import { IBM_Plex_Mono, Inter } from "next/font/google"
 import { Analytics } from "@vercel/analytics/next"
 import { ThemeProvider } from "@/contexts/theme-context"
 import { ConfluenceProvider } from "@/contexts/confluence-context"
+import { AdminProvider } from "@/contexts/admin-context"
 import "./globals.css"
 
 const ibmPlexMono = IBM_Plex_Mono({
   weight: ["400", "500", "600", "700"],
   subsets: ["latin"],
   variable: "--font-mono",
+})
+
+const inter = Inter({
+  subsets: ["latin"],
+  variable: "--font-sans",
 })
 
 export const metadata: Metadata = {
@@ -33,10 +39,14 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en" className="dark theme-dark-crt">
-      <body className={`${ibmPlexMono.className} antialiased bg-background text-foreground overflow-hidden`}>
+    <html lang="en" className="dark theme-retro">
+      <body
+        className={`${ibmPlexMono.variable} ${inter.variable} antialiased bg-background text-foreground overflow-hidden`}
+      >
         <ThemeProvider>
-          <ConfluenceProvider>{children}</ConfluenceProvider>
+          <ConfluenceProvider>
+            <AdminProvider>{children}</AdminProvider>
+          </ConfluenceProvider>
         </ThemeProvider>
         <Analytics />
       </body>

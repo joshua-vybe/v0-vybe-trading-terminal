@@ -2,39 +2,53 @@
 
 import { createContext, useContext, useState, useEffect, type ReactNode } from "react"
 
-export type ThemeName = "DARK_CRT" | "MATRIX" | "AMBER" | "LIGHT_CRT"
+export type ThemeStyle = "RETRO" | "PROFESSIONAL"
+export type ThemeMode = "DARK" | "LIGHT"
 
 interface ThemeContextType {
-  theme: ThemeName
-  setTheme: (theme: ThemeName) => void
+  style: ThemeStyle
+  mode: ThemeMode
+  setStyle: (style: ThemeStyle) => void
+  setMode: (mode: ThemeMode) => void
 }
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined)
 
 export function ThemeProvider({ children }: { children: ReactNode }) {
-  const [theme, setTheme] = useState<ThemeName>("DARK_CRT")
+  const [style, setStyle] = useState<ThemeStyle>("RETRO")
+  const [mode, setMode] = useState<ThemeMode>("DARK")
 
   useEffect(() => {
     // Load theme from localStorage on mount
-    const savedTheme = localStorage.getItem("vybe-theme") as ThemeName | null
-    if (savedTheme && ["DARK_CRT", "MATRIX", "AMBER", "LIGHT_CRT"].includes(savedTheme)) {
-      setTheme(savedTheme)
+    const savedStyle = localStorage.getItem("vybe-theme-style") as ThemeStyle | null
+    const savedMode = localStorage.getItem("vybe-theme-mode") as ThemeMode | null
+
+    if (savedStyle && ["RETRO", "PROFESSIONAL"].includes(savedStyle)) {
+      setStyle(savedStyle)
+    }
+    if (savedMode && ["DARK", "LIGHT"].includes(savedMode)) {
+      setMode(savedMode)
     }
   }, [])
 
   useEffect(() => {
     // Save theme to localStorage and apply to document
-    localStorage.setItem("vybe-theme", theme)
+    localStorage.setItem("vybe-theme-style", style)
+    localStorage.setItem("vybe-theme-mode", mode)
 
     // Remove all theme classes
-    document.documentElement.classList.remove("theme-dark-crt", "theme-matrix", "theme-amber", "theme-light-crt")
+    document.documentElement.classList.remove(
+      "theme-retro-dark",
+      "theme-retro-light",
+      "theme-professional-dark",
+      "theme-professional-light",
+    )
 
-    // Add current theme class
-    const themeClass = `theme-${theme.toLowerCase().replace("_", "-")}`
+    const themeClass = `theme-${style.toLowerCase()}-${mode.toLowerCase()}`
     document.documentElement.classList.add(themeClass)
-  }, [theme])
+  }, [style, mode])
 
-  return <ThemeContext.Provider value={{ theme, setTheme }}>{children}</ThemeContext.Provider>
+  return <ThemeContext.Provider value={{ style, mode, setStyle, setMode }}>{children}</ThemeContext.Provider>
 }
 
 export function useTheme() {

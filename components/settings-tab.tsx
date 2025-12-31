@@ -1,8 +1,11 @@
 "use client"
 
 import { useState } from "react"
+import { useTheme } from "@/contexts/theme-context"
 
 export function SettingsTab() {
+  const { style, mode, setStyle, setMode } = useTheme()
+
   const [settings, setSettings] = useState({
     scanlines: true,
     flicker: true,
@@ -36,6 +39,61 @@ export function SettingsTab() {
           <pre className="text-[10px] glow-primary mb-3">◈ DISPLAY SETTINGS</pre>
 
           <div className="space-y-3 text-[10px]">
+            {/* Theme Style Toggle */}
+            <div className="flex items-center justify-between pb-3 border-b border-[var(--theme-border)]">
+              <span className="text-[var(--theme-text-dim)]">THEME STYLE</span>
+              <div className="flex gap-2">
+                <button
+                  onClick={() => setStyle("RETRO")}
+                  className={`px-4 py-1 border ${
+                    style === "RETRO"
+                      ? "border-[var(--theme-primary)] bg-[var(--theme-primary)]/20 glow-primary"
+                      : "border-[var(--theme-border)] text-[var(--theme-text-dim)]"
+                  }`}
+                >
+                  [ RETRO ]
+                </button>
+                <button
+                  onClick={() => setStyle("PROFESSIONAL")}
+                  className={`px-4 py-1 border ${
+                    style === "PROFESSIONAL"
+                      ? "border-[var(--theme-primary)] bg-[var(--theme-primary)]/20 glow-primary"
+                      : "border-[var(--theme-border)] text-[var(--theme-text-dim)]"
+                  }`}
+                >
+                  [ PRO ]
+                </button>
+              </div>
+            </div>
+
+            {/* Mode Toggle */}
+            <div className="flex items-center justify-between pb-3 border-b border-[var(--theme-border)]">
+              <span className="text-[var(--theme-text-dim)]">MODE</span>
+              <div className="flex gap-2">
+                <button
+                  onClick={() => setMode("DARK")}
+                  className={`px-4 py-1 border ${
+                    mode === "DARK"
+                      ? "border-[var(--theme-primary)] bg-[var(--theme-primary)]/20 glow-primary"
+                      : "border-[var(--theme-border)] text-[var(--theme-text-dim)]"
+                  }`}
+                >
+                  [ DARK ]
+                </button>
+                <button
+                  onClick={() => setMode("LIGHT")}
+                  className={`px-4 py-1 border ${
+                    mode === "LIGHT"
+                      ? "border-[var(--theme-primary)] bg-[var(--theme-primary)]/20 glow-primary"
+                      : "border-[var(--theme-border)] text-[var(--theme-text-dim)]"
+                  }`}
+                >
+                  [ LIGHT ]
+                </button>
+              </div>
+            </div>
+
+            {/* Scanlines Toggle */}
             <div className="flex items-center justify-between">
               <span className="text-[var(--theme-text-dim)]">SCANLINES</span>
               <button
@@ -46,6 +104,7 @@ export function SettingsTab() {
               </button>
             </div>
 
+            {/* VHS Flicker Toggle */}
             <div className="flex items-center justify-between">
               <span className="text-[var(--theme-text-dim)]">VHS FLICKER</span>
               <button
@@ -56,6 +115,7 @@ export function SettingsTab() {
               </button>
             </div>
 
+            {/* Sound Effects Toggle */}
             <div className="flex items-center justify-between">
               <span className="text-[var(--theme-text-dim)]">SOUND EFFECTS</span>
               <button
@@ -66,6 +126,7 @@ export function SettingsTab() {
               </button>
             </div>
 
+            {/* Notifications Toggle */}
             <div className="flex items-center justify-between">
               <span className="text-[var(--theme-text-dim)]">NOTIFICATIONS</span>
               <button

@@ -29,38 +29,8 @@ const BOOT_SEQUENCE = [
   { text: "", delay: 2800 },
   { text: "NEURAL AUTHENTICATION REQUIRED", delay: 2900 },
   { text: "", delay: 3000 },
+  { text: "Type 'connect' to initialize neural handshake...", delay: 3100 },
 ]
-
-const COMMANDS = {
-  help: [
-    "",
-    "AVAILABLE COMMANDS:",
-    "  help     - Display this help message",
-    "  status   - Show system status",
-    "  connect  - Connect wallet and enter terminal",
-    "  clear    - Clear terminal",
-    "  version  - Show version info",
-    "",
-  ],
-  status: [
-    "",
-    "SYSTEM STATUS:",
-    "  ├── CPU:        12.4%",
-    "  ├── MEMORY:     2.1 GB / 8 GB",
-    "  ├── NETWORK:    142ms latency",
-    "  ├── VENUE:      HYPERLIQUID",
-    "  └── UPTIME:     47d 12h 33m",
-    "",
-  ],
-  version: [
-    "",
-    "VYBE TRADING TERMINAL",
-    "  Version:    3.0.7-beta",
-    "  Build:      2024.12.01",
-    "  Protocol:   v2.1.0",
-    "",
-  ],
-}
 
 interface CLILandingProps {
   onLogin: () => void
@@ -142,7 +112,7 @@ export function CLILanding({ onLogin }: CLILandingProps) {
         "╠══════════════════════════════════════════════════════╣",
         "║  help      Display this help message                 ║",
         "║  status    Show neural link status                   ║",
-        "║  connect   Initialize wallet handshake               ║",
+        "║  connect   Initialize neural handshake               ║",
         "║  scan      Scan for available networks               ║",
         "║  clear     Clear terminal buffer                     ║",
         "║  version   Display system version                    ║",
@@ -186,61 +156,23 @@ export function CLILanding({ onLogin }: CLILandingProps) {
     } else if (trimmed === "clear") {
       setCommandHistory([])
     } else if (trimmed === "connect") {
-      setCommandHistory([...newHistory, "", "[NEURAL] Initiating neural handshake..."])
+      setCommandHistory([
+        ...newHistory,
+        "",
+        "[NEURAL] Initializing neural handshake...",
+        "[NEURAL] Establishing encrypted tunnel...",
+        "[CRYPTO] Verifying authentication...",
+        "[NEURAL] ████████████████████ 100%",
+        "",
+        "[SUCCESS] Neural link established!",
+        "[SUCCESS] Welcome, Netrunner.",
+        "",
+        ">>> Launching trading interface...",
+      ])
       setIsConnecting(true)
-
-      setTimeout(() => {
-        setCommandHistory((prev) => [...prev, "[NEURAL] Scanning biometric signature..."])
-      }, 400)
-      setTimeout(() => {
-        setCommandHistory((prev) => [...prev, "[NEURAL] Wallet detected: 0x7a3B...f29D"])
-      }, 900)
-      setTimeout(() => {
-        setCommandHistory((prev) => [...prev, "[NEURAL] Establishing encrypted tunnel..."])
-      }, 1400)
-      setTimeout(() => {
-        setCommandHistory((prev) => [...prev, "[CRYPTO] Verifying zero-knowledge proof..."])
-      }, 1900)
-      setTimeout(() => {
-        setCommandHistory((prev) => [...prev, "[NEURAL] ░░░░░░░░░░░░░░░░░░░░ 0%"])
-      }, 2200)
-      setTimeout(() => {
-        setCommandHistory((prev) => {
-          const last = prev.length - 1
-          return [...prev.slice(0, last), "[NEURAL] ████░░░░░░░░░░░░░░░░ 25%"]
-        })
-      }, 2500)
-      setTimeout(() => {
-        setCommandHistory((prev) => {
-          const last = prev.length - 1
-          return [...prev.slice(0, last), "[NEURAL] ████████░░░░░░░░░░░░ 50%"]
-        })
-      }, 2800)
-      setTimeout(() => {
-        setCommandHistory((prev) => {
-          const last = prev.length - 1
-          return [...prev.slice(0, last), "[NEURAL] ████████████░░░░░░░░ 75%"]
-        })
-      }, 3100)
-      setTimeout(() => {
-        setCommandHistory((prev) => {
-          const last = prev.length - 1
-          return [...prev.slice(0, last), "[NEURAL] ████████████████████ 100%"]
-        })
-      }, 3400)
-      setTimeout(() => {
-        setCommandHistory((prev) => [
-          ...prev,
-          "",
-          "[SUCCESS] Neural link established!",
-          "[SUCCESS] Welcome, Netrunner.",
-          "",
-          ">>> Launching trading interface...",
-        ])
-      }, 3800)
       setTimeout(() => {
         onLogin()
-      }, 4800)
+      }, 2000)
     } else if (trimmed === "") {
       setCommandHistory(newHistory)
     } else {
@@ -321,7 +253,7 @@ export function CLILanding({ onLogin }: CLILandingProps) {
               <div className="flex items-center gap-2 mt-3 justify-center text-[10px]">
                 <span className="text-cyan-500/40">◄◄</span>
                 <div className="w-24 h-[1px] bg-gradient-to-r from-transparent via-fuchsia-500/50 to-cyan-500/50" />
-                <span className="text-cyan-400/60 tracking-[0.3em]">DECENTRALIZED PERPETUALS</span>
+                <span className="text-cyan-400 tracking-[0.3em]">DECENTRALIZED PERPETUALS</span>
                 <div className="w-24 h-[1px] bg-gradient-to-l from-transparent via-fuchsia-500/50 to-cyan-500/50" />
                 <span className="text-cyan-500/40">►►</span>
               </div>
@@ -419,7 +351,7 @@ export function CLILanding({ onLogin }: CLILandingProps) {
           <div className="flex justify-between items-center text-[10px] text-gray-500">
             <div>
               <span className="text-cyan-500/60">TIP:</span> Type{" "}
-              <span className="text-cyan-400 font-bold">connect</span> to initialize neural handshake
+              <span className="text-fuchsia-400 font-bold">connect</span> to initialize neural handshake
             </div>
             <div className="flex gap-4 items-center">
               <StatusIndicator status="syncing" label="NEURAL MESH" showPulse />

@@ -7,7 +7,7 @@ import { TradingTerminal } from "@/components/trading-terminal"
 import { JackInAnimation } from "@/components/jack-in-animation"
 
 export default function VybeTerminal() {
-  const [isAuthenticated, setIsAuthenticated] = useState(false)
+  const [isAuthenticated, setIsAuthenticated] = useState(true)
   const [showJackIn, setShowJackIn] = useState(false)
 
   const handleLogin = () => {
