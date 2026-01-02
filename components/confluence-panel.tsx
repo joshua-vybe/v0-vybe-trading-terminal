@@ -1,8 +1,9 @@
 "use client"
 
 import { useState, useEffect, useMemo } from "react"
-import { Radar, RadarChart, PolarGrid, PolarAngleAxis, ResponsiveContainer, LineChart, Line } from "recharts"
-import { useConfluence, SIGNAL_LAYERS, type QuantumClassification } from "@/contexts/confluence-context"
+import { useConfluence, SIGNAL_LAYERS } from "@/contexts/confluence-context"
+import { GroverSniperPanel } from "@/components/grover-sniper-panel"
+import { RadarChart, PolarGrid, PolarAngleAxis, Radar, ResponsiveContainer } from "recharts"
 
 const HMM_REGIMES = ["BULL", "BEAR", "CHOP", "HVOL"]
 const REGIME_COLORS: Record<string, string> = {
@@ -118,8 +119,380 @@ function BlochSphere({
   )
 }
 
+function ConfluenceTab() {
+  const { signals, layerAccuracies, totalConfluence, timeframe } = useConfluence()
+
+  const radarData = useMemo(() => {
+    return SIGNAL_LAYERS.map((layer) => ({
+      subject: layer.shortName,
+      value: signals[layer.id as keyof typeof signals] || 0,
+      fullMark: 100,
+    }))
+  }, [signals])
+
+  const getScoreColor = (score: number) => {
+    if (score >= 88) return "#22c55e"
+    if (score >= 78) return "#facc15"
+    return "#ef4444"
+  }
+
+  return (
+    <div className="space-y-3 p-2">
+      {/* Radar Chart */}
+      <div className="h-[180px]">
+        <ResponsiveContainer width="100%" height="100%">
+          <RadarChart data={radarData}>
+            <PolarGrid stroke="#00ffff" strokeOpacity={0.2} />
+            <PolarAngleAxis dataKey="subject" tick={{ fill: "#00ffff", fontSize: 10 }} />
+            <Radar
+              name="Confluence"
+              dataKey="value"
+              stroke="#00ffff"
+              fill="#00ffff"
+              fillOpacity={0.3}
+              strokeWidth={2}
+            />
+          </RadarChart>
+        </ResponsiveContainer>
+      </div>
+
+      {/* Signal Layers */}
+      <div className="space-y-1">
+        {SIGNAL_LAYERS.map((layer) => {
+          const signalValue = signals[layer.id as keyof typeof signals] || 0
+          const accuracy = layerAccuracies[layer.id as keyof typeof layerAccuracies] || 0
+          const weight = layer.weight * (0.8 + accuracy * 0.004)
+          const weightPercent = (weight / SIGNAL_LAYERS.reduce((sum, l) => sum + l.weight, 0)) * 100
+
+          return (
+            <div key={layer.id} className="flex items-center gap-2 text-[10px]">
+              <div className="w-8 font-bold" style={{ color: layer.color }}>
+                {layer.shortName}
+              </div>
+              <div className="w-12 text-cyan-400">{weightPercent.toFixed(1)}%</div>
+              <div className="flex-1 h-2 bg-black/50 border border-cyan-900/50 relative">
+                <div
+                  className="h-full transition-all duration-300"
+                  style={{
+                    width: `${signalValue}%`,
+                    backgroundColor: layer.color,
+                    opacity: 0.8,
+                  }}
+                />
+              </div>
+              <div className="w-8 text-right font-mono" style={{ color: layer.color }}>
+                {signalValue}
+              </div>
+              <div className="w-10 text-right text-cyan-600 text-[9px]">{accuracy}%</div>
+            </div>
+          )
+        })}
+      </div>
+
+      {/* Footer */}
+      <div className="pt-2 border-t border-cyan-900/50 text-[9px] text-cyan-600 text-center">
+        WEIGHTS AUTO-ADJUST BY ACCURACY (0.8x-1.2x) | VQC = 4-QUBIT QUANTUM
+      </div>
+    </div>
+  )
+}
+
+function RegimeTab() {
+  const [timeframeRegimes, setTimeframeRegimes] = useState<TimeframeRegime[]>([])
+
+  useEffect(() => {
+    const generateRegimes = () => {
+      return TIMEFRAMES_DISPLAY.map((tf) => ({
+        tf,
+        hmm: HMM_REGIMES[Math.floor(Math.random() * HMM_REGIMES.length)],
+        prob: 60 + Math.random() * 35,
+        entropy: Math.random() * 0.8,
+        elo: 1200 + Math.random() * 600,
+        days: Math.floor(Math.random() * 30) + 1,
+        score: 50 + Math.random() * 50,
+      }))
+    }
+    setTimeframeRegimes(generateRegimes())
+
+    const interval = setInterval(() => {
+      setTimeframeRegimes((prev) =>
+        prev.map((r) => ({
+          ...r,
+          prob: Math.max(50, Math.min(99, r.prob + (Math.random() - 0.5) * 5)),
+          entropy: Math.max(0, Math.min(1, r.entropy + (Math.random() - 0.5) * 0.1)),
+          score: Math.max(40, Math.min(100, r.score + (Math.random() - 0.5) * 8)),
+        })),
+      )
+    }, 2000)
+
+    return () => clearInterval(interval)
+  }, [])
+
+  return (
+    <div className="space-y-3 p-2">
+      <div className="text-[10px] font-bold text-cyan-400 mb-2">HMM REGIME ANALYSIS</div>
+      <div className="space-y-1">
+        {timeframeRegimes.map((r) => (
+          <div key={r.tf} className="flex items-center gap-2 text-[10px]">
+            <div className="w-8 text-cyan-400 font-bold">{r.tf}</div>
+            <div
+              className="px-2 py-0.5 rounded text-[9px] font-bold"
+              style={{
+                backgroundColor: `${REGIME_COLORS[r.hmm]}20`,
+                color: REGIME_COLORS[r.hmm],
+                border: `1px solid ${REGIME_COLORS[r.hmm]}`,
+              }}
+            >
+              {r.hmm}
+            </div>
+            <div className="flex-1 h-2 bg-black/50 border border-cyan-900/50 relative">
+              <div
+                className="h-full transition-all duration-300"
+                style={{
+                  width: `${r.prob}%`,
+                  backgroundColor: REGIME_COLORS[r.hmm],
+                  opacity: 0.6,
+                }}
+              />
+            </div>
+            <div className="w-10 text-right text-cyan-400">{r.prob.toFixed(0)}%</div>
+            <div className="w-16 text-right text-cyan-600 text-[9px]">H:{r.entropy.toFixed(2)}</div>
+          </div>
+        ))}
+      </div>
+
+      <div className="pt-2 border-t border-cyan-900/50">
+        <div className="text-[10px] font-bold text-cyan-400 mb-2">REGIME ELO RANKINGS</div>
+        <div className="grid grid-cols-2 gap-2 text-[9px]">
+          {timeframeRegimes
+            .sort((a, b) => b.elo - a.elo)
+            .slice(0, 4)
+            .map((r, i) => (
+              <div key={i} className="flex items-center gap-2">
+                <div className="text-cyan-600">#{i + 1}</div>
+                <div className="text-cyan-400">{r.tf}</div>
+                <div className="flex-1 text-right text-cyan-400">{r.elo.toFixed(0)}</div>
+              </div>
+            ))}
+        </div>
+      </div>
+    </div>
+  )
+}
+
+function OrderflowTab() {
+  const [cvdBars, setCvdBars] = useState<CVDBar[]>([])
+  const [orderflowMetrics, setOrderflowMetrics] = useState<OrderflowMetrics>({
+    poc: 43250,
+    vwap: 43180,
+    vpoc_dist: 0.15,
+    delta_percent: 12.5,
+    imbalance_ratio: 1.8,
+    large_trades: 847,
+    absorption: "BUYING",
+  })
+
+  useEffect(() => {
+    const generateCVD = () => {
+      return Array.from({ length: 20 }, (_, i) => ({
+        index: i,
+        value: (Math.random() - 0.5) * 100,
+      }))
+    }
+    setCvdBars(generateCVD())
+
+    const interval = setInterval(() => {
+      setCvdBars((prev) => {
+        const newBars = [...prev.slice(1)]
+        newBars.push({
+          index: prev[prev.length - 1].index + 1,
+          value: prev[prev.length - 1].value + (Math.random() - 0.48) * 20,
+        })
+        return newBars
+      })
+    }, 1000)
+
+    return () => clearInterval(interval)
+  }, [])
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setOrderflowMetrics((prev) => ({
+        poc: prev.poc + (Math.random() - 0.5) * 20,
+        vwap: prev.vwap + (Math.random() - 0.5) * 15,
+        vpoc_dist: Math.max(-1, Math.min(1, prev.vpoc_dist + (Math.random() - 0.5) * 0.1)),
+        delta_percent: Math.max(-50, Math.min(50, prev.delta_percent + (Math.random() - 0.5) * 5)),
+        imbalance_ratio: Math.max(0.5, Math.min(3, prev.imbalance_ratio + (Math.random() - 0.5) * 0.2)),
+        large_trades: Math.max(0, prev.large_trades + Math.floor((Math.random() - 0.3) * 50)),
+        absorption: Math.random() > 0.9 ? (prev.absorption === "BUYING" ? "SELLING" : "BUYING") : prev.absorption,
+      }))
+    }, 1500)
+
+    return () => clearInterval(interval)
+  }, [])
+
+  const maxCVD = Math.max(...cvdBars.map((b) => Math.abs(b.value)))
+
+  return (
+    <div className="space-y-3 p-2">
+      <div className="text-[10px] font-bold text-cyan-400 mb-2">CUMULATIVE VOLUME DELTA</div>
+
+      {/* CVD Chart */}
+      <div className="h-[100px] flex items-end gap-0.5">
+        {cvdBars.map((bar) => {
+          const height = (Math.abs(bar.value) / maxCVD) * 90
+          const isPositive = bar.value >= 0
+          return (
+            <div
+              key={bar.index}
+              className="flex-1 transition-all duration-300"
+              style={{
+                height: `${height}%`,
+                backgroundColor: isPositive ? "#22c55e" : "#ef4444",
+                opacity: 0.8,
+                alignSelf: "flex-end",
+              }}
+            />
+          )
+        })}
+      </div>
+
+      {/* Metrics */}
+      <div className="grid grid-cols-2 gap-2 text-[10px]">
+        <div className="border border-cyan-900/50 p-2">
+          <div className="text-cyan-600 text-[9px]">POC</div>
+          <div className="text-cyan-400 font-mono">${orderflowMetrics.poc.toFixed(2)}</div>
+        </div>
+        <div className="border border-cyan-900/50 p-2">
+          <div className="text-cyan-600 text-[9px]">VWAP</div>
+          <div className="text-cyan-400 font-mono">${orderflowMetrics.vwap.toFixed(2)}</div>
+        </div>
+        <div className="border border-cyan-900/50 p-2">
+          <div className="text-cyan-600 text-[9px]">DELTA %</div>
+          <div
+            className="font-mono font-bold"
+            style={{ color: orderflowMetrics.delta_percent >= 0 ? "#22c55e" : "#ef4444" }}
+          >
+            {orderflowMetrics.delta_percent >= 0 ? "+" : ""}
+            {orderflowMetrics.delta_percent.toFixed(1)}%
+          </div>
+        </div>
+        <div className="border border-cyan-900/50 p-2">
+          <div className="text-cyan-600 text-[9px]">IMBALANCE</div>
+          <div className="text-cyan-400 font-mono">{orderflowMetrics.imbalance_ratio.toFixed(2)}x</div>
+        </div>
+        <div className="border border-cyan-900/50 p-2">
+          <div className="text-cyan-600 text-[9px]">LARGE TRADES</div>
+          <div className="text-cyan-400 font-mono">{orderflowMetrics.large_trades}</div>
+        </div>
+        <div className="border border-cyan-900/50 p-2">
+          <div className="text-cyan-600 text-[9px]">ABSORPTION</div>
+          <div
+            className="font-bold text-[9px]"
+            style={{ color: orderflowMetrics.absorption === "BUYING" ? "#22c55e" : "#ef4444" }}
+          >
+            {orderflowMetrics.absorption}
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+function QuantumTab() {
+  const [quantumPanelState, setQuantumPanelState] = useState<QuantumPanelState>({
+    qubitStates: [
+      { theta: Math.PI / 4, phi: 0, rotationSpeed: 1 },
+      { theta: Math.PI / 3, phi: Math.PI / 2, rotationSpeed: 1.5 },
+      { theta: Math.PI / 6, phi: Math.PI, rotationSpeed: 0.8 },
+      { theta: Math.PI / 2, phi: (3 * Math.PI) / 2, rotationSpeed: 1.2 },
+    ],
+    predictions: Array.from({ length: 100 }, () => {
+      const predicted = Math.random() > 0.5 ? 1 : 0
+      const actual = Math.random() > 0.042 ? predicted : 1 - predicted
+      return { predicted, actual }
+    }),
+  })
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setQuantumPanelState((prev) => ({
+        qubitStates: prev.qubitStates.map((q) => ({
+          ...q,
+          theta: Math.max(0, Math.min(Math.PI, q.theta + (Math.random() - 0.5) * 0.1)),
+          phi: (q.phi + 0.05 * q.rotationSpeed) % (2 * Math.PI),
+        })),
+        predictions: [
+          ...prev.predictions.slice(1),
+          (() => {
+            const predicted = Math.random() > 0.5 ? 1 : 0
+            const actual = Math.random() > 0.042 ? predicted : 1 - predicted
+            return { predicted, actual }
+          })(),
+        ],
+      }))
+    }, 500)
+
+    return () => clearInterval(interval)
+  }, [])
+
+  const predictionAccuracy = useMemo(() => {
+    const correct = quantumPanelState.predictions.filter((p) => p.predicted === p.actual).length
+    return (correct / quantumPanelState.predictions.length) * 100
+  }, [quantumPanelState.predictions])
+
+  return (
+    <div className="space-y-3 p-2">
+      <div className="text-[10px] font-bold text-purple-400 mb-2">4-QUBIT ENTANGLED STATE</div>
+
+      {/* Bloch Spheres */}
+      <div className="grid grid-cols-4 gap-2">
+        {quantumPanelState.qubitStates.map((qubit, i) => (
+          <div key={i} className="flex flex-col items-center">
+            <BlochSphere theta={qubit.theta} phi={qubit.phi} size={40} rotationOffset={i} />
+            <div className="text-[8px] text-purple-400 mt-1">Q{i + 1}</div>
+          </div>
+        ))}
+      </div>
+
+      {/* Prediction Accuracy */}
+      <div className="border border-purple-900/50 p-2">
+        <div className="text-purple-600 text-[9px] mb-1">PREDICTION ACCURACY</div>
+        <div className="text-purple-400 font-mono text-sm font-bold">{predictionAccuracy.toFixed(1)}%</div>
+        <div className="h-1 bg-black/50 border border-purple-900/50 mt-2">
+          <div
+            className="h-full bg-purple-500 transition-all duration-300"
+            style={{ width: `${predictionAccuracy}%` }}
+          />
+        </div>
+      </div>
+
+      {/* Prediction History */}
+      <div>
+        <div className="text-[9px] text-purple-600 mb-1">LAST 50 PREDICTIONS</div>
+        <div className="flex gap-0.5 flex-wrap">
+          {quantumPanelState.predictions.slice(-50).map((p, i) => (
+            <div
+              key={i}
+              className="w-2 h-2 rounded-sm"
+              style={{
+                backgroundColor: p.predicted === p.actual ? "#22c55e" : "#ef4444",
+                opacity: 0.8,
+              }}
+            />
+          ))}
+        </div>
+      </div>
+
+      <div className="text-[9px] text-purple-600 text-center pt-2 border-t border-purple-900/50">
+        QUANTUM ENHANCEMENT ACTIVE | SUPERPOSITION MAINTAINED
+      </div>
+    </div>
+  )
+}
+
 export function ConfluencePanel() {
-  const [activeTab, setActiveTab] = useState<"confluence" | "regime" | "orderflow" | "quantum">("confluence")
+  const [activeTab, setActiveTab] = useState<"confluence" | "regime" | "orderflow" | "quantum" | "grover">("confluence")
 
   const { signals, layerAccuracies, totalConfluence, quantumState, isQuantumEnhanced, timeframe } = useConfluence()
 
@@ -269,6 +642,7 @@ export function ConfluencePanel() {
     { id: "regime", label: "REGIME" },
     { id: "orderflow", label: "ORDERFLOW" },
     { id: "quantum", label: "QUANTUM" },
+    { id: "grover", label: "GROVER" },
   ]
 
   return (
@@ -281,7 +655,7 @@ export function ConfluencePanel() {
             onClick={() => setActiveTab(tab.id as typeof activeTab)}
             className={`px-2 py-1 text-[9px] font-bold tracking-wider border transition-all ${
               activeTab === tab.id
-                ? tab.id === "quantum"
+                ? tab.id === "quantum" || tab.id === "grover"
                   ? "border-purple-500 text-purple-400 bg-purple-500/10"
                   : "border-cyan-500 text-cyan-400 bg-cyan-500/10"
                 : "border-cyan-900/50 text-cyan-700 hover:text-cyan-500"
@@ -293,283 +667,12 @@ export function ConfluencePanel() {
       </div>
 
       {/* Content */}
-      <div className="flex-1 overflow-auto p-2">
-        {activeTab === "confluence" && (
-          <div className="space-y-3">
-            <div className="text-center text-[9px] text-cyan-600 tracking-wider">
-              TIMEFRAME: <span className="text-cyan-400 font-bold">{timeframe.toUpperCase()}</span>
-            </div>
-
-            {/* Total Score with quantum glow */}
-            <div
-              className={`text-center p-2 border ${isQuantumEnhanced ? "border-purple-500/50 quantum-shimmer" : "border-cyan-900/30"} rounded`}
-            >
-              <div className="text-[10px] text-cyan-600 tracking-wider mb-1">TOTAL CONFLUENCE</div>
-              <div
-                className="text-4xl font-bold font-mono"
-                style={{
-                  color: isQuantumEnhanced ? "#8b5cf6" : getScoreColor(totalConfluence),
-                  textShadow: isQuantumEnhanced
-                    ? "0 0 20px #8b5cf680, 0 0 40px #00ffff40"
-                    : `0 0 20px ${getScoreColor(totalConfluence)}60`,
-                }}
-              >
-                {totalConfluence.toFixed(1)}
-              </div>
-              {isQuantumEnhanced && (
-                <div className="text-[9px] text-purple-400 mt-1 tracking-wider">QUANTUM ENHANCED</div>
-              )}
-            </div>
-
-            {/* Radar Chart - 7 points */}
-            <div className="h-[180px]">
-              <ResponsiveContainer width="100%" height="100%">
-                <RadarChart data={radarData}>
-                  <PolarGrid stroke="#164e6340" />
-                  <PolarAngleAxis dataKey="subject" tick={{ fill: "#0e7490", fontSize: 9 }} />
-                  <Radar
-                    name="Signal"
-                    dataKey="value"
-                    stroke="#00ffff"
-                    fill="#00ffff"
-                    fillOpacity={0.2}
-                    strokeWidth={2}
-                  />
-                </RadarChart>
-              </ResponsiveContainer>
-            </div>
-
-            <div className="space-y-1.5">
-              {SIGNAL_LAYERS.map((layer) => {
-                const value = signals[layer.id as keyof typeof signals] || 0
-                const layerAcc = layerAccuracies.find((l) => l.id === layer.id)
-                const weight = layerAcc?.weight || layer.baseWeight
-                const accuracy = layerAcc?.accuracy || 80
-                const isVQC = layer.id === "vqc"
-
-                return (
-                  <div
-                    key={layer.id}
-                    className={`flex items-center gap-2 text-[10px] ${isVQC ? "border border-purple-500/30 rounded px-1 py-0.5 bg-purple-500/5" : ""}`}
-                  >
-                    <span className="w-8 font-bold" style={{ color: layer.color }}>
-                      {layer.shortName}
-                    </span>
-                    <span className="w-10 text-cyan-600 text-[8px]">{weight.toFixed(1)}%</span>
-                    <div className="flex-1 h-2 bg-cyan-950/50 rounded overflow-hidden">
-                      <div
-                        className="h-full transition-all duration-300"
-                        style={{
-                          width: `${value}%`,
-                          backgroundColor: layer.color,
-                          boxShadow: `0 0 8px ${layer.color}60`,
-                        }}
-                      />
-                    </div>
-                    <span className="w-8 text-right font-mono" style={{ color: layer.color }}>
-                      {Math.round(value)}
-                    </span>
-                    <span className="w-10 text-right text-[8px] text-cyan-700">{accuracy.toFixed(0)}%</span>
-                  </div>
-                )
-              })}
-            </div>
-
-            {/* Weight Legend */}
-            <div className="text-[8px] text-cyan-700 text-center border-t border-cyan-900/30 pt-2 mt-2">
-              WEIGHTS AUTO-ADJUST BY ACCURACY (0.8x-1.2x) | VQC = 4-QUBIT QUANTUM
-            </div>
-          </div>
-        )}
-
-        {activeTab === "regime" && (
-          <div className="space-y-2">
-            <div className="text-[9px] text-cyan-600 tracking-wider mb-2">HMM REGIME ANALYSIS</div>
-            <div className="space-y-1">
-              {timeframeRegimes.map((regime) => (
-                <div key={regime.tf} className="flex items-center gap-2 text-[10px] border-b border-cyan-900/20 pb-1">
-                  <span className="w-8 text-cyan-500 font-bold">{regime.tf}</span>
-                  <span
-                    className="w-12 font-bold text-center px-1 rounded text-[9px]"
-                    style={{
-                      color: REGIME_COLORS[regime.hmm],
-                      backgroundColor: `${REGIME_COLORS[regime.hmm]}20`,
-                      border: `1px solid ${REGIME_COLORS[regime.hmm]}40`,
-                    }}
-                  >
-                    {regime.hmm}
-                  </span>
-                  <div className="flex-1 h-1.5 bg-cyan-950/50 rounded overflow-hidden">
-                    <div
-                      className="h-full"
-                      style={{
-                        width: `${regime.prob}%`,
-                        backgroundColor: REGIME_COLORS[regime.hmm],
-                      }}
-                    />
-                  </div>
-                  <span className="w-10 text-right text-cyan-400 font-mono">{regime.prob.toFixed(0)}%</span>
-                  <span className="w-8 text-right text-cyan-700 text-[8px]">H:{regime.entropy.toFixed(2)}</span>
-                </div>
-              ))}
-            </div>
-
-            <div className="mt-3 p-2 border border-cyan-900/30 rounded">
-              <div className="text-[9px] text-cyan-600 mb-2">REGIME ELO RANKINGS</div>
-              <div className="grid grid-cols-2 gap-2 text-[9px]">
-                {timeframeRegimes
-                  .sort((a, b) => b.elo - a.elo)
-                  .slice(0, 4)
-                  .map((r, i) => (
-                    <div key={r.tf} className="flex justify-between">
-                      <span className="text-cyan-500">
-                        #{i + 1} {r.tf}
-                      </span>
-                      <span className="text-cyan-400 font-mono">{Math.round(r.elo)}</span>
-                    </div>
-                  ))}
-              </div>
-            </div>
-          </div>
-        )}
-
-        {activeTab === "orderflow" && (
-          <div className="space-y-3">
-            <div className="grid grid-cols-2 gap-2">
-              <div className="p-2 border border-cyan-900/30 rounded">
-                <div className="text-[8px] text-cyan-600">POC</div>
-                <div className="text-sm text-cyan-400 font-mono">${orderflowMetrics.poc.toFixed(0)}</div>
-              </div>
-              <div className="p-2 border border-cyan-900/30 rounded">
-                <div className="text-[8px] text-cyan-600">VWAP</div>
-                <div className="text-sm text-cyan-400 font-mono">${orderflowMetrics.vwap.toFixed(0)}</div>
-              </div>
-            </div>
-
-            <div className="p-2 border border-cyan-900/30 rounded">
-              <div className="text-[8px] text-cyan-600 mb-1">CVD DELTA</div>
-              <div className="h-[60px] flex items-end gap-0.5">
-                {cvdBars.map((bar, i) => (
-                  <div
-                    key={i}
-                    className="flex-1 transition-all duration-200"
-                    style={{
-                      height: `${Math.abs(bar.value)}%`,
-                      backgroundColor: bar.value >= 0 ? "#00ffff" : "#ff00ff",
-                      opacity: 0.5 + (i / cvdBars.length) * 0.5,
-                    }}
-                  />
-                ))}
-              </div>
-              <div className="flex justify-between text-[8px] mt-1">
-                <span className={orderflowMetrics.delta_percent >= 0 ? "text-cyan-400" : "text-pink-400"}>
-                  {orderflowMetrics.delta_percent >= 0 ? "+" : ""}
-                  {orderflowMetrics.delta_percent.toFixed(1)}%
-                </span>
-                <span
-                  className={`font-bold ${orderflowMetrics.absorption === "BUYING" ? "text-green-400" : "text-red-400"}`}
-                >
-                  {orderflowMetrics.absorption}
-                </span>
-              </div>
-            </div>
-
-            <div className="grid grid-cols-3 gap-1 text-[9px]">
-              <div className="p-1.5 border border-cyan-900/30 rounded text-center">
-                <div className="text-[7px] text-cyan-600">IMBALANCE</div>
-                <div className="text-cyan-400 font-mono">{orderflowMetrics.imbalance_ratio.toFixed(2)}x</div>
-              </div>
-              <div className="p-1.5 border border-cyan-900/30 rounded text-center">
-                <div className="text-[7px] text-cyan-600">LG TRADES</div>
-                <div className="text-cyan-400 font-mono">{orderflowMetrics.large_trades}</div>
-              </div>
-              <div className="p-1.5 border border-cyan-900/30 rounded text-center">
-                <div className="text-[7px] text-cyan-600">VPOC DIST</div>
-                <div className={`font-mono ${orderflowMetrics.vpoc_dist >= 0 ? "text-green-400" : "text-red-400"}`}>
-                  {orderflowMetrics.vpoc_dist >= 0 ? "+" : ""}
-                  {(orderflowMetrics.vpoc_dist * 100).toFixed(1)}%
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {activeTab === "quantum" && (
-          <div className="space-y-3">
-            {/* Qubit Circuit */}
-            <div className="p-2 border border-purple-500/30 rounded bg-purple-500/5">
-              <div className="text-[9px] text-purple-400 tracking-wider mb-2">4-QUBIT QUANTUM CIRCUIT</div>
-              <div className="flex justify-around">
-                {quantumPanelState.qubitStates.map((qubit, i) => (
-                  <div key={i} className="text-center">
-                    <BlochSphere theta={qubit.theta} phi={qubit.phi} size={50} rotationOffset={i} />
-                    <div className="text-[8px] text-purple-400 mt-1">Q{i}</div>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* VQC Classification - uses shared context */}
-            <div className="p-2 border border-purple-500/30 rounded">
-              <div className="text-[9px] text-purple-400 tracking-wider mb-2">VQC-LITE CLASSIFICATION</div>
-              {(["TRENDING", "RANGING", "CASCADE"] as QuantumClassification[]).map((cls) => (
-                <div key={cls} className="flex items-center gap-2 mb-1">
-                  <span
-                    className={`text-[10px] w-16 ${quantumState.classification === cls ? "text-purple-300 font-bold" : "text-purple-600"}`}
-                  >
-                    {cls}
-                  </span>
-                  <div className="flex-1 h-2 bg-purple-950/50 rounded overflow-hidden">
-                    <div
-                      className="h-full transition-all duration-500"
-                      style={{
-                        width: `${quantumState.probabilities[cls]}%`,
-                        backgroundColor: quantumState.classification === cls ? "#a855f7" : "#6b21a8",
-                      }}
-                    />
-                  </div>
-                  <span className="text-[10px] text-purple-400 w-12 text-right font-mono">
-                    {quantumState.probabilities[cls].toFixed(1)}%
-                  </span>
-                </div>
-              ))}
-            </div>
-
-            {/* Quantum Contribution - uses shared context */}
-            <div className="p-2 border border-purple-500/30 rounded bg-gradient-to-r from-purple-500/10 to-cyan-500/10">
-              <div className="flex justify-between items-center">
-                <div>
-                  <div className="text-[9px] text-purple-400">QUANTUM CONTRIBUTION</div>
-                  <div className="text-lg font-bold text-purple-300">
-                    +{((signals.vqc * (layerAccuracies.find((l) => l.id === "vqc")?.weight || 15)) / 100).toFixed(1)}{" "}
-                    pts
-                  </div>
-                </div>
-                <div className="text-right">
-                  <div className="text-[9px] text-cyan-400">TOTAL SCORE</div>
-                  <div className="text-lg font-bold text-cyan-300">{totalConfluence.toFixed(1)}</div>
-                </div>
-              </div>
-            </div>
-
-            {/* Prediction Accuracy */}
-            <div className="p-2 border border-purple-500/30 rounded">
-              <div className="flex justify-between items-center mb-1">
-                <span className="text-[9px] text-purple-400">PREDICTION ACCURACY (100 SAMPLES)</span>
-                <span className="text-[11px] font-bold text-green-400">{predictionAccuracy.toFixed(1)}%</span>
-              </div>
-              <div className="h-8">
-                <ResponsiveContainer width="100%" height="100%">
-                  <LineChart
-                    data={quantumPanelState.predictions.map((p, i) => ({ i, match: p.predicted === p.actual ? 1 : 0 }))}
-                  >
-                    <Line type="stepAfter" dataKey="match" stroke="#22c55e" dot={false} strokeWidth={1} />
-                  </LineChart>
-                </ResponsiveContainer>
-              </div>
-            </div>
-          </div>
-        )}
+      <div className="flex-1 overflow-auto">
+        {activeTab === "confluence" && <ConfluenceTab />}
+        {activeTab === "regime" && <RegimeTab />}
+        {activeTab === "orderflow" && <OrderflowTab />}
+        {activeTab === "quantum" && <QuantumTab />}
+        {activeTab === "grover" && <GroverSniperPanel />}
       </div>
     </div>
   )
