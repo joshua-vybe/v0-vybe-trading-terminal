@@ -3,6 +3,7 @@
 import { useState } from "react"
 import { ConfluencePanel } from "./confluence-panel"
 import { FundingRateMonitor } from "./funding-rate-monitor"
+import { ManualOrderPanel } from "./manual-order-panel"
 
 type StrategyStatus = "inactive" | "active" | "profit" | "loss" | "danger" | "liquidated"
 type TradeEvent = "open_long" | "open_short" | "close" | "liquidated" | null
@@ -558,7 +559,7 @@ function StrategiesPanel() {
 }
 
 export function RightPanel() {
-  const [activeView, setActiveView] = useState<"confluence" | "funding" | "strategies">("confluence")
+  const [activeView, setActiveView] = useState<"confluence" | "funding" | "strategies" | "manual">("confluence")
 
   return (
     <div className="h-full flex flex-col gap-2 overflow-hidden">
@@ -593,12 +594,23 @@ export function RightPanel() {
         >
           STRATEGIES
         </button>
+        <button
+          onClick={() => setActiveView("manual")}
+          className={`flex-1 py-1 text-[9px] font-bold border transition-all ${
+            activeView === "manual"
+              ? "border-[#f97316] bg-[#f9731615] text-[#f97316]"
+              : "border-[#ffffff20] text-[#ffffff40] hover:border-[#ffffff40]"
+          }`}
+        >
+          MANUAL
+        </button>
       </div>
 
       <div className="flex-1 neon-border glass-panel overflow-hidden">
         {activeView === "confluence" && <ConfluencePanel />}
         {activeView === "funding" && <FundingRateMonitor />}
         {activeView === "strategies" && <StrategiesPanel />}
+        {activeView === "manual" && <ManualOrderPanel />}
       </div>
     </div>
   )
